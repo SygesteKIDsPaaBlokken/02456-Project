@@ -1,0 +1,22 @@
+#!/bin/sh
+#BSUB -q hpc
+#BSUB -J TFIDF_TRAINING
+#BSUB -n 4
+#BSUB -W 0:30
+#BSUB -R "rusage[mem=64GB]"
+#BSUB -o out/JLOG_%J.out
+
+echo '=================== Load modules: Started ==================='
+module load python3/3.11.3
+module load scipy/1.10.1-python-3.11.3
+nvidia-smi
+module load cuda/12.1
+echo '=================== Load modules: Succeded ==================='
+
+echo '=================== Activate environment: Start ==================='
+source ~/courses/02456/02456/bin/activate
+echo '=================== Activate environment: Succeded ==================='
+
+echo '=================== Executing script: Start ==================='
+python3 TF_IDF.py
+echo '=================== Executing script: Succeded ===================
