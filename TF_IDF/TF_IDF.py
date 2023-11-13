@@ -8,7 +8,6 @@ import nltk
 nltk.download('stopwords')
 
 from Encoder import TFIDF
-from Loader import clean_text
 
 # %% Load data
 print("[LOADING DATA] Start")
@@ -24,7 +23,7 @@ queries_eval.columns=['qid','query']
 print("[LOADING DATA] Done")
 # %% Fit TF.IDF
 print("[FITTING TF.IDF] Start")
-tfidf = TFIDF(documents.iloc[:500_000])
+tfidf = TFIDF(documents.iloc[:20_000])
 print("[FITTING TF.IDF] Done")
 # %% Test
 print("[TEST QUERY] Start")
