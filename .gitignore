@@ -166,3 +166,5 @@ Fasttext/queries.train.tsv
 Fasttext/RankingResults.csv
 
 *.csv
+
+JLOG*

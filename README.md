@@ -10,3 +10,10 @@ conda env create -f env.yml
 
 # Models
 The implementation of the different models can be found in the [models folder](models).
+
+# Local data
+/dtu/blackhole/1a/163226
+- collection.tsv
+- queries.eval.tsv
+- queries.train.tsv
+- queries.dev.tsv
