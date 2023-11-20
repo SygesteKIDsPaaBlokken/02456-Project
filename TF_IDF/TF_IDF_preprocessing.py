@@ -82,18 +82,24 @@ for i, (qid, query) in enumerate(tqdm(zip(queries_eval['qid'],queries_eval['quer
     if i % chunk_size == 0:
         if i // chunk_size > 0:
             np.save(f"{chunk_cache}/qchunk_{chunk_idx}.npy", chunk)
-            np.save(f"{chunk_cache}/qchunk_{chunk_idx}_pids.npy", chunk_pids)
+            np.save(f"{chunk_cache}/qchunk_{chunk_idx}_qids.npy", chunk_qids)
 
             del chunk
             gc.collect()
 
         chunk = np.zeros((chunk_size, len(vocabulary)))
-        chunk_pids = []
+        chunk_qids = []
         chunk_idx += 1
 
-    chunk_pids.append(pid)
+    chunk_qids.append(qid)
     tf = compute_tf(query, stop_words)
     
     for term in tf.keys():
+        if term not in vocabulary: continue
+
         term_idx = vocabulary.index(term)
-        chunk[i, term_idx] = tf[term]*idf[term]
+        chunk[i % chunk_size, term_idx] = tf[term]*idf[term]
+
+if (i+1) % chunk_size > 0:
+    np.save(f"{chunk_cache}/qchunk_{chunk_idx}.npy", chunk[:i+1])
+    np.save(f"{chunk_cache}/qchunk_{chunk_idx}_qids.npy", chunk_qids)

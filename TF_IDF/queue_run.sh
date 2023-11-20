@@ -18,5 +18,5 @@ source ~/courses/02456/02456/bin/activate
 echo '=================== Activate environment: Succeded ==================='
 
 echo '=================== Executing script: Start ==================='
-python3 TF_IDF_preprocessing.py
+python3 TF_IDF_search.py
 echo '=================== Executing script: Succeded ===================
