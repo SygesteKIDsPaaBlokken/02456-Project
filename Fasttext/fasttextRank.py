@@ -3,10 +3,11 @@ import pandas as pd
 import fasttext.util
 from time import time
 from tqdm import tqdm
+from numpy.linalg import norm
 
 
-def score(q, s):
-    return np.sqrt(np.sum(np.square(q - s), axis=1))
+def score(A, B):
+    return np.dot(A,B)/(norm(A, axis=1)*norm(B))
 
 
 if __name__ == '__main__':
