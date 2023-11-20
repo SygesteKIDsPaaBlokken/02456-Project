@@ -51,30 +51,30 @@ class TFIDF:
 
         self.vocabulary = list(self.idf.keys())
         
-        # print('[Fitting] Computing feature vectors')
-        # chunk = np.zeros((chunk_size, len(self.vocabulary)))
-        # chunk_idx = 0
-        # for pid in tqdm(documents['pid']):
-        #     doc_tf = self.tf[pid]
-        #     doc_chunk_idx = pid % chunk_size
+        print('[Fitting] Computing feature vectors')
+        chunk = np.zeros((chunk_size, len(self.vocabulary)))
+        chunk_idx = 0
+        for pid in tqdm(documents['pid']):
+            doc_tf = self.tf[pid]
+            doc_chunk_idx = pid % chunk_size
             
-        #     for term in doc_tf.keys():
-        #         term_idx = self.vocabulary.index(term)
-        #         chunk[doc_chunk_idx, term_idx] = doc_tf[term]*self.idf[term]
+            for term in doc_tf.keys():
+                term_idx = self.vocabulary.index(term)
+                chunk[doc_chunk_idx, term_idx] = doc_tf[term]*self.idf[term]
 
-        #     if pid % chunk_size == 0:
-        #         np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk)
+            if (pid+1) % chunk_size == 0:
+                np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk)
 
-        #         del chunk
-        #         gc.collect()
+                del chunk
+                gc.collect()
 
-        #         chunk = np.zeros((chunk_size, len(self.vocabulary)))
-        #         chunk_idx += 1
+                chunk = np.zeros((chunk_size, len(self.vocabulary)))
+                chunk_idx += 1
         
-        # if pid % chunk_size > 0:
-        #     np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk)
+        if (pid+1) % chunk_size > 0:
+            np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk[:(pid+1) % chunk_size,:])
         
-        # self.chunks = chunk_idx+1
+        self.chunks = chunk_idx+1
 
         print('[Fitting] Completed')
 
@@ -94,15 +94,28 @@ class TFIDF:
         current_min = 0
         current_min_key = 0
 
-        for pid in tqdm(self.tf.keys()):
-            doc_vec = self.compute_feature_vector(self.tf[pid])
-            similarity = cdist(vec, doc_vec.reshape(1,-1))
+        for chunk_idx in tqdm(range(self.chunks)):
+            chunk = np.load(f'{self.chunk_cache}/chunk_{chunk_idx}.npy')
+
+            similarities = cosine_similarity(chunk, vec)
+            for i, similarity in enumerate(similarities):
+                if similarity > current_min:
+                    del results[current_min_key]
+                    pid = chunk_idx*self.chunk_size + i
+                    results[pid] = similarity
+                    current_min_key = min(results, key=results.get)
+                    current_min = results[current_min_key]
+
+
+        # for pid in tqdm(self.tf.keys()):
+        #     doc_vec = self.compute_feature_vector(self.tf[pid])
+        #     similarity = cdist(vec, doc_vec.reshape(1,-1))
             
-            if similarity > current_min:
-                del results[current_min_key]
-                results[pid] = similarity
-                current_min_key = min(results, key=results.get)
-                current_min = results[current_min_key]
+        #     if similarity > current_min:
+        #         del results[current_min_key]
+        #         results[pid] = similarity
+        #         current_min_key = min(results, key=results.get)
+        #         current_min = results[current_min_key]
 
         return results
 

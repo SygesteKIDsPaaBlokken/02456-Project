@@ -2,7 +2,7 @@
 #BSUB -q hpc
 #BSUB -J TFIDF_TRAINING
 #BSUB -n 4
-#BSUB -W 0:30
+#BSUB -W 2:00
 #BSUB -R "rusage[mem=64GB]"
 #BSUB -o out/JLOG_%J.out
 
@@ -18,5 +18,5 @@ source ~/courses/02456/02456/bin/activate
 echo '=================== Activate environment: Succeded ==================='
 
 echo '=================== Executing script: Start ==================='
-python3 TF_IDF.py
+python3 TF_IDF_preprocessing.py
 echo '=================== Executing script: Succeded ===================

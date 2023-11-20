@@ -7,5 +7,6 @@ Gives a search time of 300 docs per sec, meaning 8_841_823/300 /60/60 = 8.186873
 
 # TF.IDF matrix
 Requires a lot more memory, an thus chunking. Estimated space required 8_841_823/10_000 * 3 GB = 880 GB...
-and doesn't seem to be significantly faster.
 If there was a way to remove the sparsity of the matrix...
+
+However a query
