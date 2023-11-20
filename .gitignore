@@ -168,3 +168,6 @@ Fasttext/RankingResults.csv
 *.csv
 
 JLOG*
+
+02456e
+torch_gpu*
