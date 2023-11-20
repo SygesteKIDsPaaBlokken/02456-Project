@@ -23,7 +23,7 @@ queries_eval.columns=['qid','query']
 print("[LOADING DATA] Done")
 # %% Fit TF.IDF
 print("[FITTING TF.IDF] Start")
-tfidf = TFIDF(documents.iloc[:20_000])
+tfidf = TFIDF(documents.iloc[:1_000_000])
 print("[FITTING TF.IDF] Done")
 # %% Test
 print("[TEST QUERY] Start")
