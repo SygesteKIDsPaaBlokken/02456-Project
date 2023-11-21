@@ -5,13 +5,13 @@ from numpy.linalg import norm
 from pandas import DataFrame
 from tqdm import tqdm
 from nltk.corpus import stopwords
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import cdist, cosine
 from sklearn.metrics.pairwise import cosine_similarity
 
 from Loader import clean_text
 
-def cosine_similarity(A: np.ndarray, B: np.ndarray) -> float:
-    return np.dot(A, B)/(norm(A)*norm(B))
+# def cosine_similarity(A: np.ndarray, B: np.ndarray) -> float:
+#     return np.dot(A, B)/(norm(A)*norm(B))
 
 class TFIDF:
     def __init__(self,
@@ -19,6 +19,7 @@ class TFIDF:
                  stop_words: list[str] = set(stopwords.words('english')),
                  chunk_size: int = 10_000,
                  chunk_cache: str = '/dtu/blackhole/1b/167931/tf_idf/chunks') -> None:
+        print('[Fitting] Cleaning text')
         document_dict = {pid: clean_text(passage) for pid, passage in zip(documents['pid'],documents['passage'])}
         self.stop_words = stop_words
         self.chunk_size = chunk_size
@@ -61,7 +62,7 @@ class TFIDF:
                 term_idx = self.vocabulary.index(term)
                 chunk[doc_chunk_idx, term_idx] = doc_tf[term]*self.idf[term]
 
-            if pid % chunk_size == 0:
+            if (pid+1) % chunk_size == 0:
                 np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk)
 
                 del chunk
@@ -70,8 +71,8 @@ class TFIDF:
                 chunk = np.zeros((chunk_size, len(self.vocabulary)))
                 chunk_idx += 1
         
-        if pid % chunk_size > 0:
-            np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk)
+        if (pid+1) % chunk_size > 0:
+            np.save(f'{chunk_cache}/chunk_{chunk_idx}.npy', chunk[:(pid+1) % chunk_size,:])
         
         self.chunks = chunk_idx+1
 
@@ -87,19 +88,28 @@ class TFIDF:
         # Compute term frequencies
         tf = self.compute_tf(q)
         # Create feature vector
-        vec = self.compute_feature_vector(tf)
+        vec = self.compute_feature_vector(tf).reshape(1,-1)
         # Search corpus
         results = {i:0 for i in range(number_of_results)}
         current_min = 0
         current_min_key = 0
 
-        for chunk_idx in range(self.chunks):
+        for chunk_idx in tqdm(range(self.chunks)):
             chunk = np.load(f'{self.chunk_cache}/chunk_{chunk_idx}.npy')
 
             similarities = cosine_similarity(chunk, vec)
+            for i, similarity in enumerate(similarities):
+                if similarity > current_min:
+                    del results[current_min_key]
+                    pid = chunk_idx*self.chunk_size + i
+                    results[pid] = similarity
+                    current_min_key = min(results, key=results.get)
+                    current_min = results[current_min_key]
+
+
         # for pid in tqdm(self.tf.keys()):
         #     doc_vec = self.compute_feature_vector(self.tf[pid])
-        #     similarity = cdist(vec, doc_vec)
+        #     similarity = cdist(vec, doc_vec.reshape(1,-1))
             
         #     if similarity > current_min:
         #         del results[current_min_key]
@@ -107,7 +117,7 @@ class TFIDF:
         #         current_min_key = min(results, key=results.get)
         #         current_min = results[current_min_key]
 
-        return similarities
+        return results
 
     def compute_tf(self, text: str):
         tf = defaultdict(lambda: 0)
