@@ -25,6 +25,6 @@
 #BSUB -e error_file-%J.err
 # -- end of LSF options --
 
-source venv/bin/activate
+source venv1/bin/activate
 
 python3 train_SBERT.py
