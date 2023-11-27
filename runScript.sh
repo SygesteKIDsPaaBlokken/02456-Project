@@ -3,7 +3,7 @@
 ### –- specify queue: gpuv100, gputitanxpascal, gpuk40, gpum2050 --
 #BSUB -q hpc
 ### -- set the job Name --
-#BSUB -J fasttext
+#BSUB -J SBERT
 ##BSUB -gpu "num=1:mode=exclusive_process"
 ##BSUB -n 4
 #BSUB -R "span[hosts=1]"
@@ -25,7 +25,6 @@
 #BSUB -e error_file-%J.err
 # -- end of LSF options --
 
-module load pandas/1.4.1-python-3.9.11
 source venv/bin/activate
 
 python3 train_SBERT.py
