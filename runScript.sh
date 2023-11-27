@@ -28,4 +28,4 @@
 module load pandas/1.4.1-python-3.9.11
 source venv/bin/activate
 
-python3 fasttextRank.py
+python3 train_SBERT.py
