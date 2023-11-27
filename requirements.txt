@@ -2,6 +2,7 @@ numpy
 pandas
 matplotlib
 ipykernel
+setuptools_rust
 torch
 transformers>=4.6.0
 scipy

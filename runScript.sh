@@ -26,6 +26,6 @@
 # -- end of LSF options --
 
 module load pandas/1.4.1-python-3.9.11
-source FasttextENV/bin/activate
+source venv/bin/activate
 
 python3 fasttextRank.py
