@@ -60,9 +60,9 @@ if __name__ == '__main__':
     dfEval = pd.read_csv('0-3scoringTestSet.txt', sep=' ')
     dfTop = pd.read_csv('msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
     try:
-        dfFT = pd.read_csv('Fasttext/RankingResults_0_200.csv', sep=',')
+        dfFT = pd.read_csv('Fasttext/RankingResults_Stop_0_200.csv', sep=',')
     except FileNotFoundError:
-        dfFT = pd.read_csv('RankingResults_0_200.csv', sep=',')
+        dfFT = pd.read_csv('RankingResults_Stop_0_200.csv', sep=',')
 
     topK = [1, 5, 10, 100]
     ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')

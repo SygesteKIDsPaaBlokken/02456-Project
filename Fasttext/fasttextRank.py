@@ -9,7 +9,8 @@ from nltk.corpus import stopwords
 
 
 def score(A, B):
-    return np.dot(A, B) / (norm(A, axis=1) * norm(B))
+    B_ = B.T if B.shape[0] != A.shape[-1] else B
+    return A@B_ / (norm(A) * norm(B_, axis=0))
 
 
 def ftPhrase(passage, ftModel):
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     print(f'Loading data and model took {time() - t:.3f} seconds')  # ~60
     t = time()
     try:
-        ftCorpus = pd.read_csv(f'ftCorpusStop.csv', index_col=0).values
+        ftCorpus = pd.read_csv(f'ftCorpus.csv', index_col=0).values
     except FileNotFoundError:
         ftCorpus = np.array([ftPhrase(passage, ft) for passage in tqdm(corpus, desc='Creating corpus vectors')])
         pd.DataFrame(ftCorpus).to_csv(f'ftCorpusStop.csv')
