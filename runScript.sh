@@ -1,11 +1,11 @@
 #!/bin/sh
 ### General options
 ### –- specify queue: gpuv100, gputitanxpascal, gpuk40, gpum2050 --
-#BSUB -q gpuv100
+#BSUB -q hpc
 ### -- set the job Name --
 #BSUB -J SBERT
-#BSUB -gpu "num=1:mode=exclusive_process"
-#BSUB -n 4
+##BSUB -gpu "num=1:mode=exclusive_process"
+##BSUB -n 4
 #BSUB -R "span[hosts=1]"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
 #BSUB -W 24:00
