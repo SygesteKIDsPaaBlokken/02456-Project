@@ -171,3 +171,10 @@ JLOG*
 
 02456e
 torch_gpu*
+qrels.train.tsv
+queries.dev.tsv
+queries.eval.tsv
+queries.train.tsv
+tripletsReduced.tsv
+collectionReduced.tsv
+qidpidtriples.train.full.2.tsv
