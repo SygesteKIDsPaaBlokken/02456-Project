@@ -6,6 +6,9 @@ from pathlib import Path
 
 from utils.MSMarcoDataset import MSMarco
 from models.SBERT import SBERT
+import os
+local = False
+
 # %% Setup cuda
 SBERT_model = SBERT()
 model = SBERT_model.model
@@ -19,11 +22,11 @@ print(device)
 train_loss = losses.MultipleNegativesRankingLoss(model)
 
 #%% Get data
-data_path = Path('/dtu/blackhole/1a/163226')
+data_path = Path('/dtu/blackhole/1a/163226') if not local else Path(os.getcwd())
 
-qidpidtriples_path = data_path / 'qidpidtriples.train.full.2.tsv'
+qidpidtriples_path = data_path / 'tripletsReduced.tsv'
 queries_path = data_path / 'queries.train.tsv'
-passages_path = data_path / 'collection.tsv'
+passages_path = data_path / 'collectionReduced.tsv'
 ms_marco_dataset = MSMarco(qidpidtriples_path, queries_path, passages_path)
 train_dataloader = DataLoader(ms_marco_dataset, shuffle=True, batch_size=128, num_workers=4)
 
