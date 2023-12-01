@@ -1,7 +1,7 @@
 #!/bin/sh
 ### General options
 ### –- specify queue: gpuv100, gputitanxpascal, gpuk40, gpum2050 --
-#BSUB -q gpuv100
+#BSUB -q hpc
 ### -- set the job Name --
 #BSUB -J SBERT
 ##BSUB -gpu "num=1:mode=exclusive_process"
