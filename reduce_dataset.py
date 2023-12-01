@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     queries_new = []
     unique_queries = np.unique(tripletsNew.values[:, 0])
-    for row in tqdm(df_queries.values[:, :]):
+    for row in tqdm(df_queries.values[:, :]):   # Takes 6-8 hours
         if sum(row[0] == unique_queries):
             queries_new.append(row)
 
