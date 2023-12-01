@@ -178,3 +178,4 @@ queries.train.tsv
 tripletsReduced.tsv
 collectionReduced.tsv
 qidpidtriples.train.full.2.tsv
+data/collection.tsv

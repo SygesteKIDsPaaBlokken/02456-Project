@@ -7,11 +7,11 @@ from tqdm import tqdm
 if __name__ == '__main__':
     N = 1_000_000
     t = time()
-    df_queries = pd.read_csv('queries.train.tsv', sep='\t', header=None)
+    df_queries = pd.read_csv('data/queries.train.tsv', sep='\t', header=None)
     # tripletsNew = pd.read_csv('tripletsReduced.tsv', sep='\t', header=None) # For convenience while creating the files
-    dfTriplets = pd.read_csv('qidpidtriples.train.full.2.tsv', sep='\t', header=None)
-    dfCollection = pd.read_csv('Fasttext/collection.tsv', sep='\t', header=None)
-    dfScoring = pd.read_csv('0-3scoringTestSet.txt', sep=' ')
+    dfTriplets = pd.read_csv('data/qidpidtriples.train.full.2.tsv', sep='\t', header=None)
+    dfCollection = pd.read_csv('data/collection.tsv', sep='\t', header=None)
+    dfScoring = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
     print(f'Loading CSV files took {time() - t:.4} seconds')
     t = time()
     essentialPassages = dfScoring['passage'].unique()
