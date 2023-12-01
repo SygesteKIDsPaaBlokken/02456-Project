@@ -27,8 +27,8 @@ if __name__ == '__main__':
         if sum(row[0] == unique_queries):
             queries_new.append(row)
 
-    pd.DataFrame(np.array(queries_new).T).to_csv('queries.trainReduced.tsv', sep='\t', index=False, header=False)
-    pd.DataFrame(collectNew).to_csv('Fasttext/collectionReduced.tsv', sep='\t', index=False, header=False)
-    pd.DataFrame(tripletsNew).to_csv('tripletsReduced.tsv', sep='\t', index=False, header=False)
+    pd.DataFrame(np.array(queries_new).T).to_csv('data/queries.trainReduced.tsv', sep='\t', index=False, header=False)
+    pd.DataFrame(collectNew).to_csv('data/collectionReduced.tsv', sep='\t', index=False, header=False)
+    pd.DataFrame(tripletsNew).to_csv('data/tripletsReduced.tsv', sep='\t', index=False, header=False)
     print(f'Saving took {time() - t:.4} seconds')
     pass
