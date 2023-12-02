@@ -53,6 +53,8 @@ if __name__ == '__main__':
     startQuery = 0
     stopQuery = 200
     corpusStop = -1  # -1 for all
+    fasttext_run = True
+    sbert = False
     t = time()
 
     # Load testing data
@@ -63,41 +65,47 @@ if __name__ == '__main__':
     corpusIDs = dfCorpus.values[:, 0].flatten()[:corpusStop].astype(np.float32)
     queries = dfQueries.values[:, 1].flatten()[startQuery:stopQuery]
     queryIDs = dfQueries.values[:, 0].flatten()[startQuery:stopQuery].astype(np.float32)
-    # Load Fasttext:
-    fasttext.util.download_model('en', if_exists='ignore')  # English
-    ft = fasttext.load_model('Fasttext/cc.en.300.bin')
-    fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
+    if fasttext_run:
+        fasttext.util.download_model('en', if_exists='ignore')  # English
+        ft = fasttext.load_model('Fasttext/cc.en.300.bin')
+        fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
     # Load SBERT:
-    SBERT = SentenceTransformer('trained_models/1')
+    if sbert:
+        SBERT = SentenceTransformer('trained_models/1')
 
     print(f'Loading data and model took {time() - t:.3f} seconds')  # ~60
     t = time()
     # Fasttext vectors
-    try:
-        ftCorpus = pd.read_csv(f'data/ftCorpus.csv', index_col=0).values
-    except FileNotFoundError:
-        ftCorpus = np.array([ftPhrase(passage, ft) for passage in tqdm(corpus, desc='Creating corpus vectors')])
-        pd.DataFrame(ftCorpus).to_csv(f'data/ftCorpusStop.csv')
-    print(f'Calculating all FT passage vectors took {time() - t:.3f} seconds')
-    t = time()
+    if fasttext_run:
+        try:
+            ftCorpus = pd.read_csv(f'data/ftCorpus.csv', index_col=0).values
+        except FileNotFoundError:
+            ftCorpus = np.array([ftPhrase(passage, ft) for passage in tqdm(corpus, desc='Creating corpus vectors')])
+            pd.DataFrame(ftCorpus).to_csv(f'data/ftCorpusStop.csv')
+        print(f'Calculating all FT passage vectors took {time() - t:.3f} seconds')
+        t = time()
     # SBERT vectors
-    try:
-        SBERTCorpus = pd.read_csv(f'data/SBERTCorpus.csv', index_col=0).values
-    except FileNotFoundError:
-        SBERTCorpus = SBERT.encode(corpus)
-        pd.DataFrame(ftCorpus).to_csv(f'data/SBERTCorpus.csv')
+    if sbert:
+        try:
+            SBERTCorpus = pd.read_csv(f'data/SBERTCorpus.csv', index_col=0).values
+        except FileNotFoundError:
+            SBERTCorpus = SBERT.encode(corpus)
+            pd.DataFrame(ftCorpus).to_csv(f'data/SBERTCorpus.csv')
     print(f'Calculating all SBERT passage vectors took {time() - t:.3f} seconds')
 
     N = 1000
-
-    dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
-    dfSBERT = rank(queries, queryIDs, SBERTCorpus, SBERT, name='SBERT', N=N)
+    if fasttext_run:
+        dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
+    if sbert:
+        dfSBERT = rank(queries, queryIDs, SBERTCorpus, SBERT, name='SBERT', N=N)
     # Run evaluation
     topK = [1, 5, 10, 100]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
     dfTop = pd.read_csv('data/msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
 
-    ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
-    top1000Evaluation(dfTop, dfFT, topK, name='Fasttext')
-    ScoringEvaluation(dfEval, dfSBERT, topK, name='SBERT')
-    top1000Evaluation(dfTop, dfSBERT, topK, name='SBERT')
+    if fasttext_run:
+        ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
+        top1000Evaluation(dfTop, dfFT, topK, name='Fasttext')
+    if sbert:
+        ScoringEvaluation(dfEval, dfSBERT, topK, name='SBERT')
+        top1000Evaluation(dfTop, dfSBERT, topK, name='SBERT')
