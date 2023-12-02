@@ -3,7 +3,6 @@ import pandas as pd
 import fasttext.util
 from time import time
 
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 from numpy.linalg import norm
 import nltk
@@ -71,6 +70,7 @@ if __name__ == '__main__':
         fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
     # Load SBERT:
     if sbert:
+        from sentence_transformers import SentenceTransformer
         SBERT = SentenceTransformer('trained_models/1')
 
     print(f'Loading data and model took {time() - t:.3f} seconds')  # ~60
