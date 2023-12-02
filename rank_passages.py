@@ -94,18 +94,17 @@ if __name__ == '__main__':
     print(f'Calculating all SBERT passage vectors took {time() - t:.3f} seconds')
 
     N = 1000
-    if fasttext_run:
-        dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
-    if sbert:
-        dfSBERT = rank(queries, queryIDs, SBERTCorpus, SBERT, name='SBERT', N=N)
+
     # Run evaluation
     topK = [1, 5, 10, 100]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
     # dfTop = pd.read_csv('data/msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
 
     if fasttext_run:
+        dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
         ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
         # top1000Evaluation(dfTop, dfFT, topK, name='Fasttext')
     if sbert:
+        dfSBERT = rank(queries, queryIDs, SBERTCorpus, SBERT, name='SBERT', N=N)
         ScoringEvaluation(dfEval, dfSBERT, topK, name='SBERT')
         # top1000Evaluation(dfTop, dfSBERT, topK, name='SBERT')
