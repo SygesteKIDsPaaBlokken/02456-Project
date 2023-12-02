@@ -57,7 +57,7 @@ if __name__ == '__main__':
     t = time()
 
     # Load testing data
-    dfCorpus = pd.read_csv('data/collection.tsv', sep='\t')
+    dfCorpus = pd.read_csv('data/collectionReduced.tsv', sep='\t')
     dfQueries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t')
 
     corpus = dfCorpus.values[:, 1].flatten()[:corpusStop]
@@ -81,7 +81,7 @@ if __name__ == '__main__':
             ftCorpus = pd.read_csv(f'data/ftCorpus.csv', index_col=0).values
         except FileNotFoundError:
             ftCorpus = np.array([ftPhrase(passage, ft) for passage in tqdm(corpus, desc='Creating corpus vectors')])
-            pd.DataFrame(ftCorpus).to_csv(f'data/ftCorpusStop.csv')
+            pd.DataFrame(ftCorpus).to_csv(f'data/ftCorpus.csv')
         print(f'Calculating all FT passage vectors took {time() - t:.3f} seconds')
         t = time()
     # SBERT vectors
@@ -101,11 +101,11 @@ if __name__ == '__main__':
     # Run evaluation
     topK = [1, 5, 10, 100]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
-    dfTop = pd.read_csv('data/msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
+    # dfTop = pd.read_csv('data/msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
 
     if fasttext_run:
         ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
-        top1000Evaluation(dfTop, dfFT, topK, name='Fasttext')
+        # top1000Evaluation(dfTop, dfFT, topK, name='Fasttext')
     if sbert:
         ScoringEvaluation(dfEval, dfSBERT, topK, name='SBERT')
-        top1000Evaluation(dfTop, dfSBERT, topK, name='SBERT')
+        # top1000Evaluation(dfTop, dfSBERT, topK, name='SBERT')
