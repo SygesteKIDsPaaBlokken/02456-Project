@@ -65,7 +65,7 @@ if __name__ == '__main__':
     queries = dfQueries.values[:, 1].flatten()[startQuery:stopQuery]
     queryIDs = dfQueries.values[:, 0].flatten()[startQuery:stopQuery].astype(np.float32)
     if fasttext_run:
-        fasttext.util.download_model('en', if_exists='ignore')  # English
+        # fasttext.util.download_model('en', if_exists='ignore')  # English
         ft = fasttext.load_model('Fasttext/cc.en.300.bin')
         fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
     # Load SBERT:
