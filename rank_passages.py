@@ -53,7 +53,7 @@ if __name__ == '__main__':
     stopQuery = 200
     corpusStop = -1  # -1 for all
     fasttext_run = True
-    sbert = False
+    sbert = True
     t = time()
 
     # Load testing data
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # Load SBERT:
     if sbert:
         from sentence_transformers import SentenceTransformer
-        SBERT = SentenceTransformer('trained_models/1')
+        SBERT = SentenceTransformer('/dtu/blackhole/1a/163226/1epoch')
 
     print(f'Loading data and model took {time() - t:.3f} seconds')  # ~60
     t = time()
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     N = 1000
 
     # Run evaluation
-    topK = [1, 5, 10, 100]
+    topK = [1, 2, 3, 4, 5, 10, ]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
     # dfTop = pd.read_csv('data/msmarco-passagetest2019-top1000.tsv', sep='\t', header=None)
 
