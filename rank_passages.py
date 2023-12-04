@@ -56,8 +56,8 @@ if __name__ == '__main__':
     t = time()
 
     # Load testing data
-    dfCorpus = pd.read_csv('data/collectionReduced.tsv', sep='\t')
-    dfQueries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t')
+    dfCorpus = pd.read_csv('data/collectionReduced.tsv', sep='\t', header=None)
+    dfQueries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t', header=None)
 
     corpus = dfCorpus.values[:, 1].flatten()[:corpusStop]
     corpusIDs = dfCorpus.values[:, 0].flatten()[:corpusStop].astype(np.float32)
