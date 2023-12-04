@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer, models, InputExample, losses
+from sentence_transformers import SentenceTransformer, models
 
 class SBERT:
     def __init__(self, word_embedding_model_name: str = 'nreimers/MiniLM-L6-H384-uncased', max_seq_length: int = 384, pooling_mode: str = None):
