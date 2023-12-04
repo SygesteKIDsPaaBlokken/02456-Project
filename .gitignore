@@ -181,3 +181,5 @@ qidpidtriples.train.full.2.tsv
 data/collection.tsv
 
 trained_models
+
+out/*
