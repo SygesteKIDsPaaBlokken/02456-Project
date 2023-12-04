@@ -31,7 +31,7 @@ def ScoringEvaluation(dfEval, dfModel, topK, name):
         sFT += f'Score {k}: {sum(resultFT)}/{sum(resultMax)}\t'
         sFT += f'Count {k}: {sum(resultCount)}/{k * len(np.unique(dfEval["query"]))}\n'
     print(sFT)
-    with open(name + '.txt', 'w') as f:
+    with open('data/' + name + '.txt', 'w') as f:
         f.write(sFT)
     return results
 

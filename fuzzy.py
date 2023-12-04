@@ -5,9 +5,15 @@ from time import time
 from fuzzysearch import find_near_matches
 import nltk
 from nltk.corpus import stopwords
+from utils.evaluation import ScoringEvaluation
 
 
-def rank_fuzzy(queries, queryIDs, passages, N=1000, max_l_dist=1, name = 'fuzzy'):
+def rank_fuzzy(queries, queryIDs, passages, N=1000, max_l_dist=1, name='fuzzy'):
+    try:
+        out = pd.read_csv(f'data/{name}_RankingResults.csv', sep=',')
+        return out
+    except FileNotFoundError:
+        pass
     queryColumn, passageColumn, scoreColumn = [np.empty(len(queries) * N) for _ in range(3)]
 
     i = 0
@@ -54,16 +60,20 @@ if __name__ == '__main__':
     df_passages = pd.read_csv('data/collectionReduced.tsv', sep='\t', header=None)
     dfQueries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t', header=None)
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
-    qids = np.array([dfQueries.values[dfQueries.values[:, 0] == qid, 0] for qid in np.unique(dfEval['query'])]).squeeze()
-    queries = np.array([dfQueries.values[dfQueries.values[:, 0] == qid, 1] for qid in np.unique(dfEval['query'])]).squeeze()
+    qids = np.array(
+        [dfQueries.values[dfQueries.values[:, 0] == qid, 0] for qid in np.unique(dfEval['query'])]).squeeze()
+    queries = np.array(
+        [dfQueries.values[dfQueries.values[:, 0] == qid, 1] for qid in np.unique(dfEval['query'])]).squeeze()
 
     print(f'Loading data took {time() - t:.3f} seconds')  # ~6
-    passages_clean = remove_stop_words(df_passages.values[:, 1], stop_words)    # ~20
+    passages_clean = remove_stop_words(df_passages.values[:, 1], stop_words)  # ~20
     queries_clean = remove_stop_words(queries, stop_words)
     t = time()
 
-    rank_fuzzy(queries_clean, qids, passages_clean, max_l_dist=1, )
-    print(f'Fuzzy searching took {(time() - t)/60:.3f} minutes')  # ~
+    df_fuzzy = rank_fuzzy(queries_clean, qids, passages_clean, max_l_dist=1, )
+    print(f'Fuzzy searching took {(time() - t) / 60:.3f} minutes')  # ~
 
+    topK = [1, 2, 3, 4, 5, 10, ]
+    dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
+    ScoringEvaluation(dfEval, df_fuzzy, topK=topK, name='fuzzy')
     pass
-
