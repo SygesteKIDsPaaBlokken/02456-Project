@@ -9,8 +9,8 @@
 #BSUB -R "span[hosts=1]"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
 #BSUB -W 24:00
-### -- request 32GB of memory
-#BSUB -R "rusage[mem=40GB]"
+### -- request memory
+#BSUB -R "rusage[mem=4GB]"
 ### -- set the email address --
 # please uncomment the following line and put in your e-mail address,
 # if you want to receive e-mail notifications on a non-default address
@@ -26,9 +26,6 @@
 # -- end of LSF options --
 echo '=================== Load modules: Started ==================='
 module load python3/3.11.3
-module load scipy/1.10.1-python-3.11.3
-nvidia-smi
-module load cuda/12.1
 echo '=================== Load modules: Succeded ==================='
 
 echo '=================== Activate environment: Start ==================='
@@ -38,4 +35,3 @@ echo '=================== Activate environment: Succeded ==================='
 echo '=================== Executing script: Start ==================='
 python3 SBERT_hyperparam_opt.py
 echo '=================== Executing script: Succeded ===================
-
