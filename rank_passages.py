@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import fasttext.util
 from time import time
 
 from tqdm import tqdm
@@ -52,7 +51,7 @@ if __name__ == '__main__':
     startQuery = 0
     stopQuery = 200
     corpusStop = -1  # -1 for all
-    fasttext_run = True
+    fasttext_run = False
     sbert = True
     t = time()
 
@@ -65,6 +64,7 @@ if __name__ == '__main__':
     queries = dfQueries.values[:, 1].flatten()[startQuery:stopQuery]
     queryIDs = dfQueries.values[:, 0].flatten()[startQuery:stopQuery].astype(np.float32)
     if fasttext_run:
+        import fasttext.util
         # fasttext.util.download_model('en', if_exists='ignore')  # English
         ft = fasttext.load_model('Fasttext/cc.en.300.bin')
         fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
