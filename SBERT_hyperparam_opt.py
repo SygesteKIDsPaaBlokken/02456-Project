@@ -2,7 +2,8 @@
 import optuna
 import logging
 import sys
-import time
+
+from utils.MSMarcoObjective import MSMarcoObjective
 
 optuna.logging.get_logger("optuna")\
     .addHandler(logging.StreamHandler(sys.stdout))
@@ -12,13 +13,10 @@ storage = optuna.storages.JournalStorage(
     optuna.storages.JournalFileStorage(f"./data/SBERT_hyperparam_opt/{study_name}.log"),  # NFS path for distributed optimization
 )
 # %% Creating study, SHOULD ONLY BE RUN ONCE!
-study = optuna.create_study(study_name=study_name, storage=storage)
+# study = optuna.create_study(study_name=study_name, storage=storage)
 
 # %% Objective
-def objective(trial):
-    x = trial.suggest_float("x", -10, 10)
-    time.sleep(5)
-    return (x - 2) ** 2
+objective = MSMarcoObjective(1_000_000).objective
 
 # %% Loading study
 study = optuna.load_study(
