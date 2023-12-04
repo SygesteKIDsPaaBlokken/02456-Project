@@ -3,6 +3,8 @@ from pathlib import Path
 
 import torch
 
+from utils.batch_size import get_batch_size_from_vram
+
 # Settings
 ## Machine used
 LOCAL = False
@@ -11,12 +13,12 @@ LOCAL = False
 USE_CUDA = True
 DEVICE = 'cuda' if torch.cuda.is_available() and USE_CUDA else 'cpu'
 EPOCHS = 1
-BATCH_SIZE = 128 # Should be about 128 for 32GB vram and 256 for 80GB vram
+BATCH_SIZE = get_batch_size_from_vram() 
 NUM_WORKERS = len(os.sched_getaffinity(0)) # number of avaliable CPU cores
 WARMUP_STEPS = 1_000
 
 USE_AMP = True
-VERBOSE = True
+VERBOSE = False
 SAVE_MODEL = True
 
 # Paths to data
