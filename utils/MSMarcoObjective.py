@@ -29,7 +29,7 @@ class MSMarcoObjective:
         model = SBERT(pooling_mode=pooling_mode).model
         model.to(DEVICE)
 
-        optimizer_name = trial.suggest_categorical("optimizer", ['AdamW', 'SDG'])
+        optimizer_name = trial.suggest_categorical("optimizer", ['AdamW', 'SGD'])
         optimizer_class = getattr(torch.optim, optimizer_name)
 
         lr = trial.suggest_loguniform("lr", 1e-7, 1e-3)
