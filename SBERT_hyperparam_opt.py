@@ -24,4 +24,4 @@ study = optuna.load_study(
     )
 
 # %% Run study
-study.optimize(objective, n_trials=10)
+study.optimize(objective, n_trials=10, gc_after_trial=True)
