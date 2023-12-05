@@ -20,26 +20,31 @@ TEST_SET = '0-3scoringTestSet.txt'
 qrels = pd.read_csv(DIR_PATH + '/' + TEST_SET, sep=' ')
 ft = pd.read_csv(DIR_PATH + '/' + 'ft_RankingResults.csv', index_col=0)
 topK = [1, 2, 3, 4, 5, 10, ]
-print(qrels.columns)
-print(ft.head())
+
 
 name = 'Fasttext'
 ScoringEvaluation(qrels, ft, topK, name)
 
 ft_evaluation = pd.read_csv(DIR_PATH + '/' + name + '.csv')
+fz_evaluation = pd.read_csv(DIR_PATH + '/' + 'fuzzy.csv')
+sbert_evaluation = pd.read_csv(DIR_PATH + '/' + 'sbert' + '.csv')
 
-def plot_scores():
+def render_bar_chart(metric='score'):
     """
     Plots bar chart
     """
     x = np.arange(len(topK))
-    width=0.4
-    plt.bar(x-width/2,ft_evaluation['score']/ft_evaluation['max_score']*100, width)
-    plt.bar(x+width/2,ft_evaluation['count']/ft_evaluation['max_count']*100, width)
+    width=0.2
+    plt.bar(x-width,ft_evaluation[metric]/ft_evaluation['max_'+metric]*100, width)
+    plt.bar(x,fz_evaluation[metric]/fz_evaluation['max_'+metric]*100, width)
+    plt.bar(x+width,sbert_evaluation[metric]/sbert_evaluation['max_'+metric]*100, width)
+    
+    #plt.ylim(0,5)
     plt.xticks(x, map(str,topK)) 
+    plt.title(f'{metric.capitalize()} for top K evaluations across models')
     plt.ylabel('Percentage')
     plt.xlabel('Top K') 
-    plt.legend(['Score', 'Count']) 
+    plt.legend(['FastText', 'Fuzzy','SBERT']) 
     plt.show()
 
 
@@ -134,7 +139,8 @@ def radar_factory(num_vars, frame='circle'):
 
 
 if __name__ == '__main__':
-    plot_scores()
+    render_bar_chart('score')
+    render_bar_chart('count')
     
     N = len(topK)
     theta = radar_factory(N, frame='polygon')
@@ -142,9 +148,13 @@ if __name__ == '__main__':
     data = [
         list(map(str,topK)),
         ('Score', [
-            (ft_evaluation['score']/ft_evaluation['max_score']*100).to_list()]),
+            (ft_evaluation['score']/ft_evaluation['max_score']*100).to_list(),
+            (fz_evaluation['score']/fz_evaluation['max_score']*100).to_list(),
+            (sbert_evaluation['score']/sbert_evaluation['max_score']*100).to_list()]),
         ('Count', [
-            (ft_evaluation['count']/ft_evaluation['max_count']*100).to_list()]),
+            (ft_evaluation['count']/ft_evaluation['max_count']*100).to_list(),
+            (fz_evaluation['count']/fz_evaluation['max_count']*100).to_list(),
+            (sbert_evaluation['count']/sbert_evaluation['max_count']*100).to_list()]),
     ]
 
     spoke_labels = data.pop(0)
@@ -153,8 +163,8 @@ if __name__ == '__main__':
                             subplot_kw=dict(projection='radar'))
     fig.subplots_adjust(wspace=0.25, hspace=0.20, top=0.85, bottom=0.05)
 
-    colors = ['b']#, 'r', 'g', 'm', 'y']
-    labels = ('FastText',)
+    colors = ['r','g','b']#, 'r', 'g', 'm', 'y']
+    labels = ('FastText','Fuzzy','SBERT')
     
     
     for ax, (title, case_data) in zip(axs.flat, data):
