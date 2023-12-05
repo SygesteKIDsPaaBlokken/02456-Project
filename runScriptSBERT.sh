@@ -2,11 +2,11 @@
 #BSUB -J SBERT_Training
 #BSUB -o out/torch_gpu_%J.out
 #BSUB -e out/torch_gpu_%J.err
-#BSUB -q gpua100
+#BSUB -q gpuv100
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -n 4
 #BSUB -R "rusage[mem=32G]"
-#BSUB -R "select[gpu80gb]"
+###BSUB -R "select[gpu80gb]"
 #BSUB -R "span[hosts=1]"
 #BSUB -W 24:00
 ### -- send notification at start --

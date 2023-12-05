@@ -7,7 +7,7 @@ from models.SBERT import SBERT
 from utils.MSMarcoDatasetSmall import MSMarcoSmallPandas
 from utils.config import TRIPLES_SMALL_PATH, DEVICE, BATCH_SIZE, NUM_WORKERS, USE_AMP, VERBOSE, WARMUP_STEPS, EPOCHS, SAVE_MODEL
 
-# Setup dataloader
+# %% Setup dataloader
 qidpidtriples = MSMarcoSmallPandas(TRIPLES_SMALL_PATH)
 train_dataloader = DataLoader(
     qidpidtriples,
@@ -16,11 +16,17 @@ train_dataloader = DataLoader(
     num_workers=NUM_WORKERS
 )
 
+# %% Save settings
+blackhole = '/dtu/blackhole/1b/167931/'
+output_path = blackhole + "SBERT_models1/2epochs"
+checkpoint_path = blackhole + "SBERT_models1/2epochs_checkpoints"
+
+
 # %% Setup model
-SBERT_model = SBERT()
+SBERT_model = SBERT(device=DEVICE)
 model = SBERT_model.model
 
-model.to(DEVICE)
+# model.to(DEVICE)
 print(model.device)
 
 #%% Setup loss
@@ -33,7 +39,7 @@ model.fit(
     warmup_steps = WARMUP_STEPS,
     use_amp = USE_AMP,
     show_progress_bar = VERBOSE,
-    output_path = '/dtu/blackhole/1b/167931/SBERT_models/2epochs',
+    output_path = output_path,
     save_best_model = SAVE_MODEL,
-    checkpoint_path='/dtu/blackhole/1b/167931/SBERT_models/2epochs_checkpoints'
+    checkpoint_path= checkpoint_path
 )
