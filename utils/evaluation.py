@@ -27,12 +27,18 @@ def ScoringEvaluation(dfEval, dfModel, topK, name):
 
     print(name)
     sFT = ''
+    score = []
+    max_score = []
+    count = []
+    max_count = []
     for k, resultMax, resultFT, resultCount in zip(topK, resultsMax, results, resultsCount):
-        sFT += f'Score {k}: {sum(resultFT)}/{sum(resultMax)}\t'
-        sFT += f'Count {k}: {sum(resultCount)}/{k * len(np.unique(dfEval["query"]))}\n'
-    print(sFT)
-    with open('data/' + name + '.txt', 'w') as f:
-        f.write(sFT)
+        score.append(sum(resultFT))
+        max_score.append(sum(resultMax))
+        count.append(sum(resultCount))
+        max_count.append(k * len(np.unique(dfEval["query"])))
+    
+    pd.DataFrame({'topK':topK,'score':score,'max_score':max_score,'count':count,'max_count':max_count}).to_csv('data/' + name + '.csv')
+
     return results
 
 
