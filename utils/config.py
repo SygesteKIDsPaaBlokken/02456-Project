@@ -12,13 +12,13 @@ LOCAL = False
 ## PyTorch
 USE_CUDA = True
 DEVICE = 'cuda' if torch.cuda.is_available() and USE_CUDA else 'cpu'
-EPOCHS = 1
+EPOCHS = 2
 BATCH_SIZE = get_batch_size_from_vram() 
 NUM_WORKERS = len(os.sched_getaffinity(0)) # number of avaliable CPU cores
 WARMUP_STEPS = 1_000
 
 USE_AMP = True
-VERBOSE = False
+VERBOSE = True
 SAVE_MODEL = True
 
 # Paths to data

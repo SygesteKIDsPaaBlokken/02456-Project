@@ -33,6 +33,7 @@ model.fit(
     warmup_steps = WARMUP_STEPS,
     use_amp = USE_AMP,
     show_progress_bar = VERBOSE,
-    output_path = 'trained_models/1epoch',
+    output_path = '/dtu/blackhole/1b/167931/SBERT_models/2epochs',
     save_best_model = SAVE_MODEL,
+    checkpoint_path='/dtu/blackhole/1b/167931/SBERT_models/2epochs_checkpoints'
 )

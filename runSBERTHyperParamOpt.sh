@@ -34,4 +34,4 @@ echo '=================== Activate environment: Succeded ==================='
 
 echo '=================== Executing script: Start ==================='
 python3 SBERT_hyperparam_opt.py
-echo '=================== Executing script: Succeded ===================
+echo '=================== Executing script: Succeded ==================='
