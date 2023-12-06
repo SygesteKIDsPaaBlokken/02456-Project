@@ -1,6 +1,6 @@
 #BSUB -J EVAL_SBERT
-#BSUB -o out/torch_gpu_%J.out
-#BSUB -e out/torch_gpu_%J.err
+#BSUB -o out/SBERTeval_%J.out
+#BSUB -e out/SBERTeval_%J.err
 #BSUB -q gpuv100
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -n 4
