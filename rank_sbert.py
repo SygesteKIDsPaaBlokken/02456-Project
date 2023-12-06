@@ -6,15 +6,17 @@ import nltk
 from nltk.corpus import stopwords
 from utils.evaluation import ScoringEvaluation
 from sentence_transformers import SentenceTransformer, util
-from utils.config import DEVICE, DATA_FOLDER, EVALUATION_PATH
+from utils.config import DEVICE, EVALUATION_PATH, EVALUATION_MODEL_PATH
 
 
 def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert'):
    
-    print("Using device:", DEVICE)
-    print("Evaluating model:", str(DATA_FOLDER / EVALUATION_PATH))
+    path = str(EVALUATION_PATH / EVALUATION_MODEL_PATH)
 
-    model = SentenceTransformer(DATA_FOLDER / EVALUATION_PATH, device=DEVICE)
+    print("Using device:", DEVICE)
+    print("Evaluating model:", path)
+
+    model = SentenceTransformer(path, device=DEVICE)
     
     print('#'*5, 'Encoding', '#'*5)
     SBERTCorpus = model.encode(passages, batch_size=32, show_progress_bar=True, device=DEVICE) 
