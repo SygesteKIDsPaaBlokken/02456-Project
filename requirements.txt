@@ -7,4 +7,5 @@ transformers>=4.6.0
 scipy
 sentence-transformers
 optuna
-fasttext
+#fasttext
+fuzzysearch
