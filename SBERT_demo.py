@@ -44,8 +44,8 @@ corpus_clean = remove_stop_words(corpus)
 query_clean = remove_stop_words([query])
 
 # Embed
-corpus_embeddings = SBERT.encode(corpus_clean, batch_size=32, device=DEVICE) 
-query_embeddings = SBERT.encode(query_clean, batch_size=32, device=DEVICE) 
+corpus_embeddings = SBERT.encode(corpus_clean, device=DEVICE) 
+query_embeddings = SBERT.encode(query_clean, device=DEVICE) 
 
 # Search
 query_results = semantic_search(query_embeddings, corpus_embeddings, top_k=10)[0]
