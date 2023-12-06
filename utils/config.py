@@ -24,3 +24,4 @@ SAVE_MODEL = True
 # Paths to data
 DATA_FOLDER = Path('/dtu/blackhole/1a/163226') if not LOCAL else Path(os.getcwd())
 TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
+EVALUATION_PATH = '1epoch' # Looks into data folder e.g /dtu/blackhole/1a/163226/1epoch' 
