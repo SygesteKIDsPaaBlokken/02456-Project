@@ -13,38 +13,43 @@ from matplotlib.transforms import Affine2D
 
 DIR_PATH = 'data'
 FILE_NAME = 'ft_RankingResults.csv'
-
 TEST_SET = '0-3scoringTestSet.txt'
-
 
 qrels = pd.read_csv(DIR_PATH + '/' + TEST_SET, sep=' ')
 ft = pd.read_csv(DIR_PATH + '/' + 'ft_RankingResults.csv', index_col=0)
 topK = [1, 2, 3, 4, 5, 10, ]
 
 
-name = 'Fasttext'
-ScoringEvaluation(qrels, ft, topK, name)
 
-ft_evaluation = pd.read_csv(DIR_PATH + '/' + name + '.csv')
-fz_evaluation = pd.read_csv(DIR_PATH + '/' + 'fuzzy.csv')
-sbert_evaluation = pd.read_csv(DIR_PATH + '/' + 'sbert' + '.csv')
 
-def render_bar_chart(metric='score'):
+def load_data(ranking_paths):
+    for path in ranking_paths:
+        yield pd.read_csv(DIR_PATH + '/' + path + '.csv', index_col=0)
+
+
+def render_bar_chart(metric:str='score',*RankingResultsFileNames:str):
     """
     Plots bar chart
     """
+    print(RankingResultsFileNames)
+    models = [df for df in load_data(RankingResultsFileNames)]
+    models_count = len(models)
+
     x = np.arange(len(topK))
+
     width=0.2
-    plt.bar(x-width,ft_evaluation[metric]/ft_evaluation['max_'+metric]*100, width)
-    plt.bar(x,fz_evaluation[metric]/fz_evaluation['max_'+metric]*100, width)
-    plt.bar(x+width,sbert_evaluation[metric]/sbert_evaluation['max_'+metric]*100, width)
-    
-    #plt.ylim(0,5)
+
+    bar_positions = np.arange(len(topK)) - width * (models_count - 1) / 2
+
+    for i, model in enumerate(models):
+        plt.bar(bar_positions + i * width, model[metric]/model['max_'+metric]*100, width=width)
+
+    plt.ylim(0,100)
     plt.xticks(x, map(str,topK)) 
     plt.title(f'{metric.capitalize()} for top K evaluations across models')
-    plt.ylabel('Percentage')
+    plt.ylabel('Accuracy (%)')
     plt.xlabel('Top K') 
-    plt.legend(['FastText', 'Fuzzy','SBERT']) 
+    plt.legend([*RankingResultsFileNames]) 
     plt.show()
 
 
@@ -139,9 +144,14 @@ def radar_factory(num_vars, frame='circle'):
 
 
 if __name__ == '__main__':
-    render_bar_chart('score')
-    render_bar_chart('count')
+    render_bar_chart('score','Fasttext', 'fuzzy', 'sbert_1epoch')
+    render_bar_chart('count','Fasttext', 'fuzzy', 'sbert_1epoch')
     
+
+    ft_evaluation = pd.read_csv(DIR_PATH + '/' + 'Fasttext.csv')
+    fz_evaluation = pd.read_csv(DIR_PATH + '/' + 'fuzzy.csv')
+    sbert_evaluation = pd.read_csv(DIR_PATH + '/' + 'sbert_1epoch' + '.csv') # 1epoch
+
     N = len(topK)
     theta = radar_factory(N, frame='polygon')
 
