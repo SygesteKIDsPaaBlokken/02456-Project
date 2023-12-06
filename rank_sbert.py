@@ -6,14 +6,17 @@ import nltk
 from nltk.corpus import stopwords
 from utils.evaluation import ScoringEvaluation
 from sentence_transformers import SentenceTransformer, util
-from utils.config import DEVICE, DATA_FOLDER
+from utils.config import DEVICE, EVALUATION_PATH, EVALUATION_MODEL_PATH
 
 
-def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert_1epoch'):
-    MODEL_PATH = '1epoch'
+def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert'):
+   
+    path = str(EVALUATION_PATH / EVALUATION_MODEL_PATH)
+
     print("Using device:", DEVICE)
+    print("Evaluating model:", path)
 
-    model = SentenceTransformer(DATA_FOLDER / MODEL_PATH, device=DEVICE)
+    model = SentenceTransformer(path, device=DEVICE)
     
     print('#'*5, 'Encoding', '#'*5)
     SBERTCorpus = model.encode(passages, batch_size=32, show_progress_bar=True, device=DEVICE) 
@@ -24,6 +27,7 @@ def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert_1epoch'):
     ranking = util.semantic_search(query_embeddings, SBERTCorpus, top_k=1000)
     
     # Transform
+    t = time()
     df_list = []
     query_id = 0
     for query_results in tqdm(ranking, desc='Transforming'):
@@ -35,16 +39,11 @@ def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert_1epoch'):
         
     df = pd.DataFrame(df_list)
     df.to_csv(f'data/{name}_RankingResults.csv')
-    
 
+    print(f'Transforming {name} data took {time() - t:.3f} seconds')
 
     return df
     
-
-    t = time()
-    
-    print(f'Saving {name} data took {time() - t:.3f} seconds')
-    return out
 
 def remove_stop_words(words, stop_words):
     passages_clean = []
@@ -75,7 +74,7 @@ if __name__ == '__main__':
 
     df_sbert = rank_sbert(queries_clean, qids, df_passages.values[:, 1], )
     #df_sbert = pd.read_csv('SEMANTIC_SEARCH.csv')
-    print(f'SBERT searching took {(time() - t) / 60:.3f} minutes')  # ~
+    print(f'SBERT ranking took {(time() - t) / 60:.3f} minutes')  # ~
 
     topK = [1, 2, 3, 4, 5, 10, ]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
