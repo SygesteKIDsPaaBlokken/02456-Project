@@ -9,11 +9,11 @@ from sentence_transformers import SentenceTransformer, util
 from utils.config import DEVICE, DATA_FOLDER
 
 
-def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert'):
+def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert_1epoch'):
     MODEL_PATH = '1epoch'
     print("Using device:", DEVICE)
 
-    model = SentenceTransformer(DATA_FOLDER + MODEL_PATH, device=DEVICE)
+    model = SentenceTransformer(DATA_FOLDER / MODEL_PATH, device=DEVICE)
     
     print('#'*5, 'Encoding', '#'*5)
     SBERTCorpus = model.encode(passages, batch_size=32, show_progress_bar=True, device=DEVICE) 
