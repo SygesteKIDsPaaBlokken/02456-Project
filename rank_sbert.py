@@ -6,11 +6,10 @@ import nltk
 from nltk.corpus import stopwords
 from utils.evaluation import ScoringEvaluation
 from sentence_transformers import SentenceTransformer, util
-from utils.config import DEVICE, EVALUATION_PATH, EVALUATION_MODEL_PATH
+from utils.config import DEVICE, EVALUATION_PATH, EVALUATION_MODEL_PATH, MODEL_NAME
 
 
-def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert'):
-   
+def rank_sbert(queries, queryIDs, passages):
     path = str(EVALUATION_PATH / EVALUATION_MODEL_PATH)
 
     print("Using device:", DEVICE)
@@ -38,9 +37,9 @@ def rank_sbert(queries, queryIDs, passages, N=1000, name='sbert'):
         query_id += 1
         
     df = pd.DataFrame(df_list)
-    df.to_csv(f'data/{name}_RankingResults.csv')
+    df.to_csv(f'data/{MODEL_NAME}_RankingResults.csv')
 
-    print(f'Transforming {name} data took {time() - t:.3f} seconds')
+    print(f'Transforming {MODEL_NAME} data took {time() - t:.3f} seconds')
 
     return df
     
@@ -78,5 +77,5 @@ if __name__ == '__main__':
 
     topK = [1, 2, 3, 4, 5, 10, ]
     dfEval = pd.read_csv('data/0-3scoringTestSet.txt', sep=' ')
-    ScoringEvaluation(dfEval, df_sbert, topK=topK, name='sbert')
+    ScoringEvaluation(dfEval, df_sbert, topK=topK, name=MODEL_NAME)
     pass
