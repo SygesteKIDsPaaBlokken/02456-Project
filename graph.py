@@ -144,13 +144,14 @@ def radar_factory(num_vars, frame='circle'):
 
 
 if __name__ == '__main__':
-    render_bar_chart('score','Fasttext', 'fuzzy', 'sbert_1epoch')
-    render_bar_chart('count','Fasttext', 'fuzzy', 'sbert_1epoch')
+    render_bar_chart('score','Fasttext', 'fuzzy', 'sbert_1epoch', 'sbert_2epochs')
+    render_bar_chart('count','Fasttext', 'fuzzy', 'sbert_1epoch', 'sbert_2epochs')
     
 
     ft_evaluation = pd.read_csv(DIR_PATH + '/' + 'Fasttext.csv')
     fz_evaluation = pd.read_csv(DIR_PATH + '/' + 'fuzzy.csv')
     sbert_evaluation = pd.read_csv(DIR_PATH + '/' + 'sbert_1epoch' + '.csv') # 1epoch
+    sbert_2_epochs_evaluation = pd.read_csv(DIR_PATH + '/' + 'sbert_2epochs' + '.csv') # 2epochs
 
     N = len(topK)
     theta = radar_factory(N, frame='polygon')
@@ -160,11 +161,13 @@ if __name__ == '__main__':
         ('Score', [
             (ft_evaluation['score']/ft_evaluation['max_score']*100).to_list(),
             (fz_evaluation['score']/fz_evaluation['max_score']*100).to_list(),
-            (sbert_evaluation['score']/sbert_evaluation['max_score']*100).to_list()]),
+            (sbert_evaluation['score']/sbert_evaluation['max_score']*100).to_list(),
+            (sbert_2_epochs_evaluation['score']/sbert_2_epochs_evaluation['max_score']*100).to_list()]),
         ('Count', [
             (ft_evaluation['count']/ft_evaluation['max_count']*100).to_list(),
             (fz_evaluation['count']/fz_evaluation['max_count']*100).to_list(),
-            (sbert_evaluation['count']/sbert_evaluation['max_count']*100).to_list()]),
+            (sbert_evaluation['count']/sbert_evaluation['max_count']*100).to_list(),
+            (sbert_2_epochs_evaluation['count']/sbert_2_epochs_evaluation['max_count']*100).to_list()]),
     ]
 
     spoke_labels = data.pop(0)
@@ -173,8 +176,8 @@ if __name__ == '__main__':
                             subplot_kw=dict(projection='radar'))
     fig.subplots_adjust(wspace=0.25, hspace=0.20, top=0.85, bottom=0.05)
 
-    colors = ['r','g','b']#, 'r', 'g', 'm', 'y']
-    labels = ('FastText','Fuzzy','SBERT')
+    colors = ['r','g','b','m']#, 'r', 'g', 'm', 'y']
+    labels = ('FastText','Fuzzy','SBERT 1 epoch', 'SBERT 2 epochs',)
     
     
     for ax, (title, case_data) in zip(axs.flat, data):
