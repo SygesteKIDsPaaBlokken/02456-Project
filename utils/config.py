@@ -27,4 +27,4 @@ TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
 
 # Evaluation params
 EVALUATION_PATH = Path('/dtu/blackhole/1b/167931/SBERT_models') if not LOCAL else Path(os.getcwd()) # '/dtu/blackhole/1a/163226'
-EVALUATION_MODEL_PATH = '2epoch' # Looks into data folder e.g Path(/dtu/blackhole/1a/163226/) / <EVALUATION_MODEL_PATH> <- 1epoch
+EVALUATION_MODEL_PATH = '2epochs' # Looks into data folder e.g Path(/dtu/blackhole/1a/163226/) / <EVALUATION_MODEL_PATH> <- 1epoch
