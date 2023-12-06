@@ -7,7 +7,7 @@
 #BSUB -R "rusage[mem=8G]"
 ###BSUB -R "select[gpu80gb]"
 #BSUB -R "span[hosts=1]"
-#BSUB -W 24:00
+#BSUB -W 4
 ### -- send notification at start --
 #BSUB -B
 ### -- send notification at completion--
