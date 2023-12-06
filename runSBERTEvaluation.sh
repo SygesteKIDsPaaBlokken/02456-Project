@@ -14,7 +14,7 @@
 #BSUB -N
 # end of BSUB options
 echo '=================== Load modules: Started ==================='
-module load python3/3.11.3
+module load python3/3.9.11
 echo '=================== Load modules: Succeded ==================='
 
 echo '=================== Activate environment: Start ==================='
