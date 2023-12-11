@@ -5,11 +5,11 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import gc
-from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
+import torch
 # %% Config
 data_path = '/dtu/blackhole/1a/163226/'
 queries_eval_path = data_path + 'queries.eval.tsv'
@@ -54,17 +54,22 @@ def compute_tf(query: str):
 def search_in_chunk(chunk: np.ndarray, pids: list[int]):
     global results
     
+    chunk = torch.Tensor(chunk).cuda()
     for query_chunk_idx in tqdm(range(q_chunks), desc='Query chunks'):
         query_chunk = np.load(f"{chunk_cache}/qchunk_{query_chunk_idx}.npy")
+        query_chunk = torch.Tensor(query_chunk).cuda()
         chunk_qids = np.load(f"{chunk_cache}/qchunk_{query_chunk_idx}_qids.npy")
 
-        similarities = cosine_similarity(chunk, query_chunk)
+        similarities = torch.cosine_similarity(chunk[None,:,:], query_chunk[:,None,:], dim=-1)
+        similarities = similarities.detach().cpu().numpy()
+        print('Similarities shape:',similarities.shape)
         for i, qid in enumerate(chunk_qids):
             q_similarities = similarities[i]
             q_keys = result_keys[qid]
             q_results = results[qid]
 
-            for i, similarity in enumerate(q_similarities):
+            for i in range(len(q_similarities)):
+                similarity = q_similarities[i]
                 if similarity > q_keys['minValue']:
                     del q_results[q_keys['minKey']]
                     pid = pids[i]
@@ -92,7 +97,7 @@ for i, pid in enumerate((pbar := tqdm(tf.keys(),desc='Documents'))):
     
     for term in doc_tf.keys():
         term_idx = vocabulary.index(term)
-        chunk[i, term_idx] = doc_tf[term]*idf[term]
+        chunk[i % doc_chunk_size, term_idx] = doc_tf[term]*idf[term]
 
 # %% Evaluation
 evaluation = pd.DataFrame({}, columns=['qid','pid','score'])
