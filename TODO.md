@@ -1,0 +1,14 @@
+- [ ] Setup MRR evaluation - Long
+- [ ] Evaluate BERT with stop words - Long
+- [ ] New baseline: BM25 algorithm - Fabian
+- [ ] (Hyper param optimization) - Thomas & Peter
+- [ ] Train final model with finetuned hyper params - Peter & Thomas
+- [ ] Write report
+	- [ ] Abstract
+	- [ ] Introduction
+	- [ ] Theory
+	- [ ] Method
+	- [ ] Results
+	- [ ] Discussion
+	- [ ] Conclusion
+- [ ] Clean repo 
