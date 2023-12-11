@@ -89,18 +89,5 @@ if __name__ == '__main__':
         dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
         ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
 
-    if sbert:
-        from sentence_transformers import SentenceTransformer
-        SBERT = SentenceTransformer('/dtu/blackhole/1a/163226/1epoch')
-
-        try:
-            SBERTCorpus = pd.read_csv(f'data/SBERTCorpus.csv', index_col=0).values
-        except FileNotFoundError:
-            SBERTCorpus = SBERT.encode(corpus)
-            pd.DataFrame(ftCorpus).to_csv(f'data/SBERTCorpus.csv')
-            print(f'Calculating all SBERT passage vectors took {time() - t:.3f} seconds')
-
-        dfSBERT = rank(queries, queryIDs, SBERTCorpus, SBERT, name='SBERT', N=N)
-        ScoringEvaluation(dfEval, dfSBERT, topK, name='SBERT')
 
 
