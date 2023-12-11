@@ -56,8 +56,8 @@ if __name__ == '__main__':
     startQuery = 0
     stopQuery = 200
     corpusStop = -1  # -1 for all
-    fasttext_run = False
-    sbert = True
+    fasttext_run = True
+    sbert = False
     t = time()
 
     # Load testing data
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         import fasttext.util
         # fasttext.util.download_model('en', if_exists='ignore')  # English
         ft = fasttext.load_model('Fasttext/cc.en.300.bin')
-        fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
+        # fasttext.util.reduce_model(ft, 100)  # Reduce the dimensions to save RAM
         try:
             ftCorpus = pd.read_csv(f'data/ftCorpus.csv', index_col=0).values
         except FileNotFoundError:
@@ -88,7 +88,6 @@ if __name__ == '__main__':
             print(f'Calculating all FT passage vectors took {time() - t:.3f} seconds')
         dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
         ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
-
 
     if sbert:
         from sentence_transformers import SentenceTransformer
