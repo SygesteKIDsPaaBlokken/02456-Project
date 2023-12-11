@@ -8,20 +8,27 @@ def ScoringEvaluation(dfEval, dfModel, topK, name):
     resultsCount = [[] for _ in topK]
     resultsMax = [[] for _ in topK]
 
-    for qid in tqdm(np.unique(dfEval['query'])):
-        # Find the relevant columns to speed up computation:
-        evalRows = dfEval[dfEval['query'] == qid]
+    query_ids = np.unique(dfEval['query'])
+    for qid in tqdm(query_ids):
+        
+        # Find the relevant rows
+        query_eval_rows = dfEval[dfEval['query'] == qid]
         for i, k in enumerate(topK):
-            # Take the top k scores in the evaluation data, to find the maximum possible score:
-            resultsMax[i].append(np.sum(np.sort(evalRows['score'].values)[::-1][:k]))
-            # Could be a list comprehension:
+            # Take the top k scores in the evaluation data, to find the maximum possible score
+            resultsMax[i].append(
+                np.sort(query_eval_rows['score'].values)[::-1][:k]\
+                    .sum()
+            )
+
+            # Determine the top k summed score for the query
             passages = dfModel[dfModel['query'] == qid][:k]['passage']
             score = 0
             count = 0
             for passage in passages:
-                temp = sum(evalRows[evalRows['passage'] == passage]['score'].values)
+                temp = sum(query_eval_rows[query_eval_rows['passage'] == passage]['score'].values)
                 score += temp
                 count += 0 < temp
+
             results[i].append(score)
             resultsCount[i].append(count)
 
@@ -35,7 +42,7 @@ def ScoringEvaluation(dfEval, dfModel, topK, name):
         score.append(sum(resultFT))
         max_score.append(sum(resultMax))
         count.append(sum(resultCount))
-        max_count.append(k * len(np.unique(dfEval["query"])))
+        max_count.append(k * len(query_ids))
     
     pd.DataFrame({'topK':topK,'score':score,'max_score':max_score,'count':count,'max_count':max_count}).to_csv('data/' + name + '.csv')
 
