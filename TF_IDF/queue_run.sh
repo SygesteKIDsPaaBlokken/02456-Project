@@ -1,7 +1,8 @@
 #!/bin/sh
-#BSUB -q hpc
-#BSUB -J TFIDF_TRAINING
+#BSUB -q gpua100
+#BSUB -J TFIDF
 #BSUB -n 4
+#BSUB -gpu "num=1"
 #BSUB -W 2:00
 #BSUB -R "rusage[mem=64GB]"
 #BSUB -o out/JLOG_%J.out
