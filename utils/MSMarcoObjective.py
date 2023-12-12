@@ -43,7 +43,7 @@ class MSMarcoObjective:
 
         model.fit(
             train_objectives=[(self.train_dataloader, train_loss)],
-            epochs = 10,
+            epochs = 1,
             evaluator=self.evaluator,
             evaluation_steps=n_steps_epoch//10,
             callback=lambda score,epoch,step: trial.report(evaluator_out_to_trial_report_in(n_steps_epoch, score, epoch, step)),
