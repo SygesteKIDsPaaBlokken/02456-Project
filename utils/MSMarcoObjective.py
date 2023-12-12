@@ -45,7 +45,7 @@ class MSMarcoObjective:
             train_objectives=[(self.train_dataloader, train_loss)],
             epochs = 10,
             evaluator=self.evaluator,
-            evaluation_steps=2000,
+            evaluation_steps=n_steps_epoch//10,
             callback=lambda score,epoch,step: trial.report(evaluator_out_to_trial_report_in(n_steps_epoch, score, epoch, step)),
             warmup_steps = WARMUP_STEPS,
             optimizer_class=optimizer_class,
