@@ -35,7 +35,10 @@ class MSMarcoObjective:
 
         lr = trial.suggest_float("lr", 1e-7, 1e-3, log=True)
 
-        train_loss = losses.MultipleNegativesRankingLoss(model=model)
+        train_loss_name = trial.suggest_categorical("train_loss", ['MultipleNegativesRankingLoss', 'TripletLoss'])
+        train_loss_class = getattr(losses, train_loss_name)
+        train_loss = train_loss_class(model=model)
+
         n_steps_epoch = self.limit // BATCH_SIZE
 
         model.fit(
