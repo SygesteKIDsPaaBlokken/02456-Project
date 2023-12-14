@@ -46,7 +46,7 @@ def make_evaluator():
 
     ir_evaluator = evaluation.InformationRetrievalEvaluator(dev_queries, corpus, dev_rel_docs,
                                                             show_progress_bar=True,
-                                                            corpus_chunk_size=100000,
+                                                            corpus_chunk_size=100_000,
                                                             precision_recall_at_k=[10, 100],
                                                             name="msmarco dev")
     
