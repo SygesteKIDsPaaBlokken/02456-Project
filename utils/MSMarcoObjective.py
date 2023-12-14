@@ -24,6 +24,7 @@ class MSMarcoObjective:
         self.limit = limit
 
         self.evaluator = make_evaluator()
+        self.last_evaluation_score = None
 
     def objective(self, trial: Trial):
         pooling_mode = trial.suggest_categorical("pooling_mode", ["mean", "max", "cls"])
@@ -46,7 +47,7 @@ class MSMarcoObjective:
             epochs = 1,
             evaluator=self.evaluator,
             evaluation_steps=n_steps_epoch//10,
-            callback=lambda score,epoch,step: trial.report(evaluator_out_to_trial_report_in(n_steps_epoch, score, epoch, step)),
+            callback=lambda score,epoch,step: trial.report(*evaluator_out_to_trial_report_in(n_steps_epoch, score, epoch, step)),
             warmup_steps = WARMUP_STEPS,
             optimizer_class=optimizer_class,
             optimizer_params={'lr': lr},
@@ -56,7 +57,10 @@ class MSMarcoObjective:
             save_best_model = SAVE_MODEL,
         )
 
+        return self.last_evaluation_score
+
 def evaluator_out_to_trial_report_in(n_steps_epoch: int, score: float, epoch: int, step: int) -> tuple[int, int]:
+    self.last_evaluation_score = score
     total_steps = 0
 
     if step == -1:
@@ -65,5 +69,5 @@ def evaluator_out_to_trial_report_in(n_steps_epoch: int, score: float, epoch: in
     else:
         total_steps = epoch*n_steps_epoch + step
     
-    return (score, total_steps)
+    return score, total_steps
     
