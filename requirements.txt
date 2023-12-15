@@ -9,3 +9,5 @@ sentence-transformers
 optuna
 #fasttext
 fuzzysearch
+plotly
+nbformat>=4.2.0
