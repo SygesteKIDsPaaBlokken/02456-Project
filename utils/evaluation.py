@@ -1,6 +1,46 @@
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import os, datetime, argparse
+
+
+def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10):
+    '''
+    Calculates MRR score for the given model and evaluation data using MRR@10 as default.
+    '''
+    query_ids = np.unique(dfEval['query'])
+    results = []
+
+    MRR = 0
+    ranking = []
+
+    for n, qid in enumerate(tqdm(query_ids)):
+
+        query = dfEval[dfEval['query'] == qid]
+        retrievals = dfModel[dfModel['query']==qid]
+        relevant_passages = query.loc[query['score'] > 0,'passage'].values
+
+        if qid in np.unique(dfModel['query']):
+            for i in range(0,MaxMRRRank):
+                if retrievals['passage'].iloc[i] in relevant_passages:
+                    MRR += 1/(i+1)
+                    ranking.append(i+1)
+                    print(f"Found first relevant retrieval at rank: {i+1} for test query #{n+1}")
+                    break
+
+    MRR /= len(query_ids)
+    print('='*30)
+    print(f'MRR@{MaxMRRRank}: {MRR:.4f}')
+    print('Number of test queries: ', len(query_ids))
+    print('='*30)
+
+    path = 'data/MRR.csv'
+    if os.path.exists(path):
+        pd.DataFrame({'model':model_name,'MRR':MRR,'timestamp':datetime.datetime.now()}, index=[0]).to_csv(path, mode='a', header=False, index=False)
+    else:
+        print('Creating new file data/MRR.csv since it does not exist already')
+        pd.DataFrame({'model':model_name,'MRR':MRR,'timestamp':datetime.datetime.now()}, index=[0]).to_csv(path, index=False)
+    return results
 
 
 def ScoringEvaluation(dfEval, dfModel, topK, name):
@@ -67,3 +107,20 @@ def top1000Evaluation(dfTop, dfModel, topK, name):
         sFT += f'{k}: {np.average(resultFT):.2}/{k}\t'
     print(sFT)
     return results
+
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='MRR evaluation script')
+    parser.add_argument('--eval_file', type=str, default='data\\0-3scoringTestSet.txt', help='Path to evaluation file')
+    parser.add_argument('--model', type=str, help='Path to model file', required=True)
+    parser.add_argument('--name', type=str, help='Name of model to be saved as', required=True)
+    args = parser.parse_args()
+
+
+    dfEval = pd.read_csv(args.eval_file, sep=' ')
+    dfModel = pd.read_csv(args.model)
+
+    print('Evaluation model:', args.model)
+    MRRRank(dfEval, dfModel, args.name)
