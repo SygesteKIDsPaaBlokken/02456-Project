@@ -1,7 +1,7 @@
 #!/bin/sh
 ### General options
 ### –- specify queue: gpuv100, gputitanxpascal, gpuk40, gpum2050 --
-#BSUB -q gpua40
+#BSUB -q gpua100
 ### -- set the job Name --
 #BSUB -J SBERT_HP_1m
 #BSUB -gpu "num=1:mode=exclusive_process"
@@ -10,7 +10,7 @@
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
 #BSUB -W 24:00
 ### -- request memory
-#BSUB -R "rusage[mem=16GB]"
+#BSUB -R "rusage[mem=4GB]"
 ##BSUB -R "select[gpu32gb]"
 ### -- set the email address --
 # please uncomment the following line and put in your e-mail address,
@@ -30,7 +30,7 @@ module load python3/3.11.3
 echo '=================== Load modules: Succeded ==================='
 
 echo '=================== Activate environment: Start ==================='
-source ~/courses/02456/02456/bin/activate
+source venv/bin/activate
 echo '=================== Activate environment: Succeded ==================='
 
 echo '=================== Executing script: Start ==================='

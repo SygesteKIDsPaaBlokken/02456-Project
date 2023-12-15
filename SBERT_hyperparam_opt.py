@@ -15,7 +15,7 @@ storage = optuna.storages.JournalStorage(
     optuna.storages.JournalFileStorage(f"./data/SBERT_hyperparam_opt/{study_name}.log"),  # NFS path for distributed optimization
 )
 # %% Creating study, SHOULD ONLY BE RUN ONCE!
-# study = optuna.create_study(study_name=study_name, storage=storage)
+# study = optuna.create_study(study_name=study_name, storage=storage, direction=optuna.study.StudyDirection.MAXIMIZE)
 
 # %% Generate run/job id
 run_id = str(uuid4())
@@ -40,4 +40,4 @@ Device: {DEVICE}
 
 Study: {study_name}
 """)
-study.optimize(objective, timeout=16*60*60, gc_after_trial=True)
+study.optimize(objective, timeout=23*60*60, gc_after_trial=True)
