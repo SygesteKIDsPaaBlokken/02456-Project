@@ -1,7 +1,7 @@
 #!/bin/sh
 ### General options
 ### –- specify queue: gpuv100, gputitanxpascal, gpuk40, gpum2050 --
-#BSUB -q gpuv100
+#BSUB -q gpua100
 ### -- set the job Name --
 #BSUB -J SBERT_HP
 #BSUB -gpu "num=1"
@@ -10,7 +10,7 @@
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
 #BSUB -W 24:00
 ### -- request memory
-#BSUB -R "rusage[mem=8G]"
+#BSUB -R "rusage[mem=32G]"
 ##BSUB -R "select[gpu80gb]"
 ### -- send notification at start --
 #BSUB -B
