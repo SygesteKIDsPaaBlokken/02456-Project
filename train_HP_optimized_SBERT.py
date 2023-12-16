@@ -1,5 +1,6 @@
 #%% General imports
 import torch.optim
+import torch
 from torch.utils.data import DataLoader
 
 from sentence_transformers import losses
@@ -9,6 +10,7 @@ from models.SBERT import SBERT
 from utils.MSMarcoDatasetSmall import MSMarcoSmallPandas
 from utils.config import TRIPLES_SMALL_PATH, DEVICE, BATCH_SIZE, NUM_WORKERS, USE_AMP, VERBOSE, WARMUP_STEPS, EPOCHS, SAVE_MODEL
 
+torch.seed = 42
 # %% Load study
 print("########################### Loading hyper parameters ###########################")
 study_name = 'sbert_HP_1m'
@@ -53,6 +55,7 @@ model.fit(
     output_path = output_path,
     save_best_model = SAVE_MODEL,
     checkpoint_path= checkpoint_path,
+    checkpoint_save_steps=len(train_dataloader)//10,
     optimizer_class=optimizer,
     optimizer_params={'lr': lr}
 )
