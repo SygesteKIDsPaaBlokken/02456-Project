@@ -18,17 +18,18 @@ NUM_WORKERS = len(os.sched_getaffinity(0)) # number of avaliable CPU cores
 WARMUP_STEPS = 1_000
 
 ## Data
-MSMARCO_PATH = Path('data/MSMarco')
 DATA_FOLDER = Path('/dtu/blackhole/1a/163226') if not LOCAL else Path(os.getcwd())
+TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
 
+MSMARCO_PATH = Path('data/MSMarco')
+RANKING_PATH = Path('data/rankings')
+EVALUATION_PATH = Path('data/evaluations')
+
+## Models
+SBERT_MODELS_PATH = Path('/dtu/blackhole/1b/167931/SBERT_models')
+
+## Model settings
+MODEL_NAME = 'HP_SBERT'
 USE_AMP = True
 VERBOSE = True
 SAVE_MODEL = True
-
-TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
-
-# Evaluation params
-EVALUATION_PATH = Path('/dtu/blackhole/1b/167931/SBERT_models') if not LOCAL else Path(os.getcwd()) # '/dtu/blackhole/1a/163226'
-EVALUATION_MODEL_PATH = '2epochs' # Looks into data folder e.g Path(/dtu/blackhole/1a/163226/) / <EVALUATION_MODEL_PATH> <- 1epoch
-
-MODEL_NAME = 'HP_SBERT'
