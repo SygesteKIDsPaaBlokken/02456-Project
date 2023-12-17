@@ -4,12 +4,12 @@
 # %% Imports
 from time import time
 import pandas as pd
-from utils.evaluation import ScoringEvaluation, evaluate_model
+from utils.evaluation import evaluate_model
 from utils.config import EVALUATION_PATH, VERBOSE, MSMARCO_PATH, RANKING_PATH
 from utils import MODEL
 
 # %% Set model
-model:MODEL = MODEL.HP_SBERT
+model:MODEL = MODEL.SBERT_1e
 topK:int = 100
 # %% Loading rankings
 ranking_file = f"{model.value}_top{topK}.csv"

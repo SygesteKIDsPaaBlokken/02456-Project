@@ -7,6 +7,7 @@ from tqdm import tqdm
 from utils import MODEL, get_SBERT_model_path
 
 from utils.config import DEVICE, MODEL_NAME, RANKING_PATH, VERBOSE
+from utils.preprocessing import remove_stop_words
 
 def _save_rankings(rankings: DataFrame, save_path: str):
     if VERBOSE:
@@ -87,15 +88,25 @@ def rank_fuzzy(
         top_k: int = 100,
         max_l_dist = 1,
         save_rankings: bool = True,
-        save_path: str = None
+        save_path: str = None,
+        rm_stop_words: bool = True
     ):
 
     save_rankings = save_rankings or save_path is not None
-    if save_path is None: save_path = RANKING_PATH.joinpath(f'fuzzy_l{max_l_dist}_top{top_k}.csv')
+    if save_path is None: save_path = RANKING_PATH.joinpath(f'Fuzzy_l{max_l_dist}_top{top_k}.csv')
+
+    if rm_stop_words:
+        if VERBOSE:
+            t = time()
+            print('# Removing stop words')
+        passages['passage'] = remove_stop_words(passages['passage'])
+        queries['query'] = remove_stop_words(queries['query'])
+        if VERBOSE:
+            t = time()
+            print('# Removing stop words')
 
     if VERBOSE:
-        t = time()
-        print('# Ranking passages')
+        print(f'# Stop words removed: {(time() - t)/60:.3f} min')
 
     rankings = []
     for i, query_row in tqdm(queries.iterrows(),total=len(queries)):
