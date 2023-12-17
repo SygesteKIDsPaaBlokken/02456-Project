@@ -17,13 +17,14 @@ BATCH_SIZE = get_batch_size_from_vram() if DEVICE == 'cuda' else 128
 NUM_WORKERS = len(os.sched_getaffinity(0)) # number of avaliable CPU cores
 WARMUP_STEPS = 1_000
 
+## Data
+MSMARCO_PATH = Path('data/MSMarco')
+DATA_FOLDER = Path('/dtu/blackhole/1a/163226') if not LOCAL else Path(os.getcwd())
+
 USE_AMP = True
 VERBOSE = True
 SAVE_MODEL = True
 
-# Paths to data
-DATA_FOLDER = Path('/dtu/blackhole/1a/163226') if not LOCAL else Path(os.getcwd())
-# Peter: /dtu/blackhole/1b/167931
 TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
 
 # Evaluation params

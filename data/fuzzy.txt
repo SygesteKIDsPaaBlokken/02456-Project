@@ -1,6 +1,0 @@
-Score 1: 5/122	Count 1: 2/43
-Score 2: 8/239	Count 2: 3/86
-Score 3: 12/352	Count 3: 5/129
-Score 4: 12/461	Count 4: 5/172
-Score 5: 12/567	Count 5: 5/215
-Score 10: 20/1053	Count 10: 9/430
