@@ -1,7 +1,7 @@
 #BSUB -J Fuzzy_ranking
 #BSUB -o out/Fuzzy_ranking_%J.out
 #BSUB -e out/Fuzzy_ranking_%J.err
-#BSUB -q HPC
+#BSUB -q hpc
 #BSUB -n 4
 #BSUB -R "rusage[mem=8G]"
 #BSUB -R "span[hosts=1]"
