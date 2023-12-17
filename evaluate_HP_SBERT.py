@@ -6,19 +6,19 @@ from time import time
 import pandas as pd
 from utils.evaluation import evaluate_model
 from utils.ranking import rank_sbert
-from utils.config import VERBOSE
+from utils.config import VERBOSE, MSMARCO_PATH
 
 # %% Loading data
 if VERBOSE:
     data_loading_start = time()
     print("########### Loading data ###########")
-passages = pd.read_csv('data/collectionReduced.tsv', sep='\t', header=None)
+passages = pd.read_csv(MSMARCO_PATH.joinpath('collectionReduced.tsv'), sep='\t', header=None)
 passages.columns = ['pid','passage']
 if VERBOSE: 
     queries_loading_start = time()
     print(f"Passages loaded ({(queries_loading_start - data_loading_start)/60:.2f} min)")
 
-queries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t', header=None)
+queries = pd.read_csv(MSMARCO_PATH.joinpath('msmarco-test2019-queries.tsv'), sep='\t', header=None)
 queries.columns = ['qid','query']
 if VERBOSE: 
     print(f"Queries loaded ({(time() - queries_loading_start)/60:.2f} min)")
@@ -41,7 +41,7 @@ if VERBOSE:
     ranking_start = time()
     print("########### Evaluating model ###########")
 top_k = [1, 2, 3, 4, 5, 10, ]
-eval_ds = pd.read_csv('data/2019qrels-docs.txt', sep=' ')
+eval_ds = pd.read_csv(MSMARCO_PATH.joinpath('2019qrels-docs.txt'), sep=' ')
 evaluate_model(
     eval_ds,
     HP_SBERT_rankings,

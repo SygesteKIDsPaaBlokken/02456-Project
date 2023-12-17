@@ -15,7 +15,7 @@ def rank_sbert(
         save_path: str = None
         ):
     save_rankings = save_rankings or save_path is not None
-    if save_path is None: save_path = f'data/rankings/{model_name}_RankingResults_{top_k}.csv'
+    if save_path is None: save_path = f'data/rankings/{model_name}_{top_k}.csv'
 
     if VERBOSE:
         print("Using device:", DEVICE)
