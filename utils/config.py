@@ -12,7 +12,7 @@ LOCAL = False
 ## PyTorch
 USE_CUDA = True
 DEVICE = 'cuda' if torch.cuda.is_available() and USE_CUDA else 'cpu'
-EPOCHS = 2
+EPOCHS = 1
 BATCH_SIZE = get_batch_size_from_vram() if DEVICE == 'cuda' else 128
 NUM_WORKERS = len(os.sched_getaffinity(0)) # number of avaliable CPU cores
 WARMUP_STEPS = 1_000
@@ -30,4 +30,4 @@ TRIPLES_SMALL_PATH = DATA_FOLDER / 'triples.train.small.tsv'
 EVALUATION_PATH = Path('/dtu/blackhole/1b/167931/SBERT_models') if not LOCAL else Path(os.getcwd()) # '/dtu/blackhole/1a/163226'
 EVALUATION_MODEL_PATH = '2epochs' # Looks into data folder e.g Path(/dtu/blackhole/1a/163226/) / <EVALUATION_MODEL_PATH> <- 1epoch
 
-MODEL_NAME = 'SBERT_2epochs'
+MODEL_NAME = 'HP_SBERT'

@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 from tqdm import tqdm
 import os, datetime, argparse
+
+from utils.config import MODEL_NAME
 
 
 def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10):
@@ -88,6 +91,53 @@ def ScoringEvaluation(dfEval, dfModel, topK, name):
 
     return results
 
+def evaluate_model(
+        eval_ds: DataFrame,
+        model_rankings: DataFrame,
+        top_k: list[int],
+        model_name: str = MODEL_NAME,
+        save_evaluation: bool = True,
+        save_path: str = None
+    ):
+
+    save_evaluation = save_evaluation or save_path is not None
+    if save_path is None: save_path = f'data/evaluations/{model_name}.csv'
+
+    k_scores = [0 for _ in top_k]
+    k_counts = [0 for _ in top_k]
+    k_max_scores = [0 for _ in top_k]
+    k_max_counts = [0 for _ in top_k]
+
+    query_ids = np.unique(eval_ds['query'])
+    for qid in tqdm(query_ids):
+        
+        # Find the relevant rows
+        query_eval_rows = eval_ds[eval_ds['query'] == qid]
+        for i, k in enumerate(top_k):
+            # Take the top k scores in the evaluation data, to find the maximum possible score
+            query_true_best_scores = query_eval_rows.sort_values('score',ascending=False)[:k]['score']
+            k_max_scores[i] += query_true_best_scores.sum()
+            k_max_counts[i] += (query_true_best_scores>0).sum()
+
+            # Determine the top k summed score for the query
+            top_k_passages = model_rankings[model_rankings['qid'] == qid][:k]['pid']
+            evaluation_scores = query_eval_rows.loc[query_eval_rows['passage'].isin(top_k_passages),'score']
+            
+            k_scores[i] += evaluation_scores.sum()
+            k_counts[i] += (evaluation_scores > 0).sum()
+    
+    model_evaluation = DataFrame({
+        'topK':top_k,
+        'score':k_scores,
+        'max_score':k_max_scores,
+        'count':k_counts,
+        'max_count':k_max_counts
+    })
+
+    if save_evaluation:
+        model_evaluation.to_csv(save_path, index=False)
+    
+    return model_evaluation
 
 def top1000Evaluation(dfTop, dfModel, topK, name):
     # USELESS
