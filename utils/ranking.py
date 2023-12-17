@@ -2,13 +2,14 @@ from time import time
 from pandas import DataFrame
 from sentence_transformers import SentenceTransformer, util
 from tqdm import tqdm
+from utils import MODEL, get_SBERT_model_path
 
-from utils.config import EVALUATION_PATH, EVALUATION_MODEL_PATH, DEVICE, MODEL_NAME, VERBOSE
+from utils.config import DEVICE, MODEL_NAME, VERBOSE
 
 def rank_sbert(
         queries: DataFrame,
         passages: DataFrame,
-        model_path: str = str(EVALUATION_PATH / EVALUATION_MODEL_PATH),
+        model_path: str = get_SBERT_model_path(MODEL.HP_SBERT),
         top_k: int = 100,
         model_name: str = MODEL_NAME,
         save_rankings: bool = True,
