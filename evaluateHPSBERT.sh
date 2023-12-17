@@ -1,7 +1,7 @@
 #BSUB -J EVAL_SBERT
 #BSUB -o out/HPSBERTeval_%J.out
 #BSUB -e out/HPSBERTeval_%J.err
-#BSUB -q gpua100
+#BSUB -q gpuv100
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -n 4
 #BSUB -R "rusage[mem=24G]"
