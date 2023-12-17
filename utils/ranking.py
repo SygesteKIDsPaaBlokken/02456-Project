@@ -99,14 +99,12 @@ def rank_fuzzy(
         if VERBOSE:
             t = time()
             print('# Removing stop words')
+        
         passages['passage'] = remove_stop_words(passages['passage'])
         queries['query'] = remove_stop_words(queries['query'])
-        if VERBOSE:
-            t = time()
-            print('# Removing stop words')
 
-    if VERBOSE:
-        print(f'# Stop words removed: {(time() - t)/60:.3f} min')
+        if VERBOSE:
+            print(f'# Stop words removed: {(time() - t)/60:.3f} min')
 
     rankings = []
     for i, query_row in tqdm(queries.iterrows(),total=len(queries)):
