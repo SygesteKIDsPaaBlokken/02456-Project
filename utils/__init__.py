@@ -3,7 +3,7 @@ from enum import Enum
 from utils.config import SBERT_MODELS_PATH
 
 class MODEL(Enum):
-    FUZZY = 'fuzzy'
+    FUZZY = 'Fuzzy'
     BM25 = 'BM25'
     FAST_TEXT = 'FastText'
     SBERT_1e = 'SBERT_1e'
