@@ -61,17 +61,3 @@ elif model == MODEL.FUZZY:
 
 if VERBOSE:
     print(f"########### Ranking done ({(time()-ranking_start)/60:.2f} min) ###########")
-
-# %% Evaluate model
-if VERBOSE:
-    ranking_start = time()
-    print("########### Evaluating model ###########")
-top_k = [1, 2, 3, 4, 5, 10, ]
-eval_ds = pd.read_csv(MSMARCO_PATH.joinpath('2019qrels-docs.txt'), sep=' ')
-evaluate_model(
-    eval_ds,
-    rankings,
-    top_k=top_k
-)
-if VERBOSE:
-    print(f"########### Evaluation completed ({(time()-ranking_start)/60:.2f} min) ###########")
