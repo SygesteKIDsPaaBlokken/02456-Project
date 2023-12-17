@@ -35,8 +35,8 @@ SBERT = SentenceTransformer(SBERT_path, device=DEVICE)
 # %% Demo
 query = "What is Hygge?"
 corpus = [
-    "I think it's a short story. So I thought I might need more details. You're on Twitter and facebook",
-    "Hygge is a Danish term that embodies a quality of coziness, comfort, and contentment."
+    "I think it's a short story. So I thought I might need more details. You're on Twitter and facebook", # 02456GPT
+    "Hygge is a Danish term that embodies a quality of coziness, comfort, and contentment." # ChatGPT
 ]
 
 # Cleaning

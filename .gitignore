@@ -183,3 +183,6 @@ data/collection.tsv
 trained_models
 
 out/*
+
+!data/evaluations/*
+!data/rankings/*
