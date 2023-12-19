@@ -7,12 +7,11 @@ import pandas as pd
 from argparse import ArgumentParser
 
 from utils import MODEL, get_SBERT_model_path
-from utils.evaluation import evaluate_model
 from utils.ranking import rank_sbert, rank_fuzzy
 from utils.config import VERBOSE, MSMARCO_PATH
 
 # %% Select model
-model:MODEL = MODEL.FUZZY
+model:MODEL = MODEL.FUZZY_l1
 topK:int = 100
 # %% CMD arguments
 parser = ArgumentParser()

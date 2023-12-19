@@ -9,7 +9,7 @@ from utils.config import EVALUATION_PATH, VERBOSE, MSMARCO_PATH, RANKING_PATH
 from utils import MODEL
 
 # %% Set model
-model:MODEL = MODEL.SBERT_1e
+model:MODEL = MODEL.FUZZY_l1
 topK:int = 100
 # %% Loading rankings
 ranking_file = f"{model.value}_top{topK}.csv"
