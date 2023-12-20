@@ -170,7 +170,8 @@ Fasttext/RankingResults.csv
 JLOG*
 
 02456e
-torch_gpu*
+torch_gpu*.err
+torch_gpu*.out
 qrels.train.tsv
 queries.dev.tsv
 queries.eval.tsv
@@ -186,3 +187,6 @@ out/*
 
 !data/evaluations/*
 !data/rankings/*
+.vscode/*
+SBERT_HP_*.err
+SBERT_HP_*.out

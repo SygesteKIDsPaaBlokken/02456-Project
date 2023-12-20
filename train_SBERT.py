@@ -5,41 +5,43 @@ import torch
 from pathlib import Path
 
 from utils.MSMarcoDataset import MSMarco
+from utils.config import DATA_FOLDER, DEVICE, BATCH_SIZE, NUM_WORKERS, EPOCHS, USE_AMP, SAVE_MODEL, WARMUP_STEPS, VERBOSE
 from models.SBERT import SBERT
 import os
 
-local = True
 reduced = True
 
 # %% Setup cuda
 SBERT_model = SBERT()
 model = SBERT_model.model
 
-use_cuda = True
-device = 'cuda' if torch.cuda.is_available() and use_cuda else 'cpu'
-model.to(device)
-print(device)
+model.to(DEVICE)
 
 #%% Setup loss
 train_loss = losses.MultipleNegativesRankingLoss(model)
 
 #%% Get data
-data_path = Path('/dtu/blackhole/1a/163226') if not local else Path(os.getcwd())
 
-qidpidtriples_path = data_path / f'triplets{"Reduced" if reduced else ""}.tsv'
-queries_path = data_path / f'queries.train{"Reduced" if reduced else ""}.tsv'
-passages_path = data_path / f'collection{"Reduced" if reduced else ""}.tsv'
+qidpidtriples_path = DATA_FOLDER / f'triplets{"Reduced" if reduced else ""}.tsv'
+queries_path = DATA_FOLDER / f'queries.train{"Reduced" if reduced else ""}.tsv'
+passages_path = DATA_FOLDER / f'collection{"Reduced" if reduced else ""}.tsv'
 ms_marco_dataset = MSMarco(qidpidtriples_path, queries_path, passages_path)
-train_dataloader = DataLoader(ms_marco_dataset, shuffle=True, batch_size=128, num_workers=4)
+train_dataloader = DataLoader(ms_marco_dataset, shuffle=True, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS)
+
+# %% Save settings
+blackhole = '/dtu/blackhole/1b/167931/'
+output_path = blackhole + "SBERT_models/3epochs"
+checkpoint_path = blackhole + "SBERT_models/3epochs_checkpoints"
 
 #%% train model
-# out_path = Path('/zhome/12/a/163226/Desktop/02456/02456-Project/trained_models')
 
 model.fit(
-    train_objectives=[(train_dataloader, train_loss)], 
-    epochs=5, 
-    warmup_steps=100, 
-    show_progress_bar=True,
-    output_path='trained_models/1',
-    save_best_model=True,
-    )
+    train_objectives=[(train_dataloader, train_loss)],
+    epochs = EPOCHS,
+    warmup_steps = WARMUP_STEPS,
+    use_amp = USE_AMP,
+    show_progress_bar = VERBOSE,
+    output_path = output_path,
+    save_best_model = SAVE_MODEL,
+    checkpoint_path= checkpoint_path
+)
