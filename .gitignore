@@ -190,3 +190,4 @@ out/*
 .vscode/*
 SBERT_HP_*.err
 SBERT_HP_*.out
+!data/SBERT_hyperparam_opt/*
