@@ -1,53 +1,80 @@
-from sentence_transformers import  evaluation
+from pathlib import Path
+from collections import defaultdict
 
-from utils.config import DATA_FOLDER
+from sentence_transformers.evaluation import InformationRetrievalEvaluator
+
+from utils.config import DATA_FOLDER, VERBOSE
+
 
 def make_evaluator():
-    dev_queries_file = DATA_FOLDER / 'queries.dev.tsv'
-    qrels_filepath = DATA_FOLDER / 'qrels.dev.tsv'
-    collection_filepath = DATA_FOLDER / 'collection.tsv'
+    dev_queries_path = DATA_FOLDER / 'queries.dev.tsv'
+    qrels_path = DATA_FOLDER / 'qrels.dev.tsv'
+    collection_path = DATA_FOLDER / 'collection.tsv'
 
     corpus = {}             #Our corpus pid => passage
     dev_queries = {}        #Our dev queries. qid => query
     dev_rel_docs = {}       #Mapping qid => set with relevant pids
     needed_pids = set()     #Passage IDs we need
-    needed_qids = set()     #Query IDs we need
 
     # Load the 6980 dev queries
-    with open(dev_queries_file, encoding='utf8') as fIn:
-        for line in fIn:
-            qid, query = line.strip().split("\t")
-            dev_queries[qid] = query.strip()
-
+    dev_queries = get_dev_queries(dev_queries_path)
 
     # Load which passages are relevant for which queries
-    with open(qrels_filepath) as fIn:
-        for line in fIn:
-            qid, _, pid, _ = line.strip().split('\t')
-
-            if qid not in dev_queries:
-                continue
-
-            if qid not in dev_rel_docs:
-                dev_rel_docs[qid] = set()
-            dev_rel_docs[qid].add(pid)
-
-            needed_pids.add(pid)
-            needed_qids.add(qid)
-
+    dev_rel_docs, needed_pids = get_relevant_passages_for_queries(qrels_path, dev_queries)
 
     # Read passages
-    with open(collection_filepath, encoding='utf8') as fIn:
-        for line in fIn:
-            pid, passage = line.strip().split("\t")
+    corpus = get_corpus(collection_path, needed_pids)
 
-            if pid in needed_pids:
-                corpus[pid] = passage.strip()
-
-    ir_evaluator = evaluation.InformationRetrievalEvaluator(dev_queries, corpus, dev_rel_docs,
-                                                            show_progress_bar=True,
+    ir_evaluator = InformationRetrievalEvaluator(dev_queries, corpus, dev_rel_docs,
+                                                            show_progress_bar=VERBOSE,
                                                             corpus_chunk_size=100_000,
                                                             precision_recall_at_k=[10, 100],
                                                             name="msmarco dev")
-    
     return ir_evaluator
+
+
+def get_dev_queries(dev_queries: Path) -> dict[str, str]:
+    dev_queries = {} 
+    with open(dev_queries, encoding='utf8') as dev_queries_file:
+        for line in dev_queries_file:
+            qid, query = extract_data_from_line(line)
+            dev_queries[qid] = format_query(query)
+    
+    return dev_queries
+
+
+def get_relevant_passages_for_queries(qrels: Path, dev_queries: dict[str, str]) ->tuple[dict, set]:
+    dev_rel_docs = defaultdict(set())
+    needed_pids = set()
+
+    with open(qrels) as qrels_file:
+        for line in qrels_file:
+            qid, _, pid, _ = extract_data_from_line(line)
+
+            if qid not in dev_queries: # Do not include queries not in dev set
+                continue
+
+            dev_rel_docs[qid].add(pid)
+
+            needed_pids.add(pid)
+    
+    return dict(dev_rel_docs), needed_pids
+
+def get_corpus(corpus: Path, needed_pids: set) -> dict[str, str]:
+    corpus = dict()
+    with open(corpus, encoding='utf8') as corpus_file:
+        for line in corpus_file:
+            pid, passage = extract_data_from_line(line)
+
+            if pid in needed_pids:
+                corpus[pid] = format_passage(passage)
+
+    return corpus
+    
+def extract_data_from_line(line: str):
+    return line.strip().split("\t")
+
+def format_query(query: str):
+    return query.strip()
+
+format_passage = format_query
