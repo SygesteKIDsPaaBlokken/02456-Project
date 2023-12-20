@@ -3,7 +3,6 @@ from torch.utils.data import DataLoader
 
 from sentence_transformers import losses, SentenceTransformer
 
-from models.SBERT import SBERT
 from utils.MSMarcoDatasetSmall import MSMarcoSmallPandas
 from utils.config import TRIPLES_SMALL_PATH, DEVICE, BATCH_SIZE, NUM_WORKERS, USE_AMP, VERBOSE, WARMUP_STEPS, EPOCHS, SAVE_MODEL, DATA_FOLDER
 
@@ -23,12 +22,8 @@ checkpoint_path = blackhole + "SBERT_models/3epochs_checkpoints"
 
 
 # %% Setup model
-# SBERT_model = SBERT(device=DEVICE)
-# model = SBERT_model.model
-
 model = SentenceTransformer(DATA_FOLDER / '1epoch', device=DEVICE)
-# model.to(DEVICE)
-print(model.device)
+model.to(DEVICE)
 
 #%% Setup loss
 train_loss = losses.MultipleNegativesRankingLoss(model=model)
