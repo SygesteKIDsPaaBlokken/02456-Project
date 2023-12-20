@@ -9,7 +9,7 @@ from sentence_transformers import losses
 from models.SBERT import SBERT
 from utils.config import DEVICE, USE_AMP, VERBOSE, SAVE_MODEL, WARMUP_STEPS, NUM_WORKERS, BATCH_SIZE, TRIPLES_SMALL_PATH
 from utils.MSMarcoDatasetSmall import MSMarcoSmallPandas
-from utils.MSMarcoDatasetDev2 import make_evaluator
+from utils.MSMarcoEvaluator import make_evaluator
 
 class MSMarcoObjective:
     def __init__(self, run_id: str, limit: int = None) -> None:
