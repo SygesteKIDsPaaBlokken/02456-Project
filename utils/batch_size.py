@@ -7,9 +7,9 @@ def get_batch_size_from_vram():
         raise MemoryError('Too litle VRAM')
     
     if vram < 32e9:
-        return 32
+        return 32*2
     
     if vram < 64e9:
-        return 64
+        return 64*2
     
-    return 128
+    return 128*2

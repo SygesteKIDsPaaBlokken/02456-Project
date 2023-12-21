@@ -11,8 +11,8 @@ conda env create -f env.yml
 
 ## venv and pip
 ```
-python -m venv SBERT
-source SBERT/bin/activate
+python -m venv 02456
+source 02456/bin/activate
 pip install -r requirements.txt
 ```
 

@@ -12,3 +12,4 @@ rank_bm25
 fuzzysearch
 plotly
 nbformat>=4.2.0
+seaborn
