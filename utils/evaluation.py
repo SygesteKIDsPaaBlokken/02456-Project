@@ -104,27 +104,6 @@ def evaluate_model(
     
     return model_evaluation
 
-def top1000Evaluation(dfTop, dfModel, topK, name):
-    # USELESS
-    results = [[] for _ in topK]
-    for qid in tqdm(np.unique(dfTop.values[:, 0])):
-        # Find the relevant columns to speed up computation:
-        evalRows = dfTop[dfTop.values[:, 0] == qid].values[:, :2]
-        for i, k in enumerate(topK):
-            # Could be a list comprehension:
-            passagesFT = dfModel[dfModel['query'] == qid][:k]['passage']
-            # Check for each passage whether it is there
-            results[i].append(sum([sum(passage == evalRows[:, 1]) for passage in passagesFT]))
-
-    print(f'{name} (average overlap)')
-    sFT = ''
-    for k, resultFT in zip(topK, results):
-        sFT += f'{k}: {np.average(resultFT):.2}/{k}\t'
-    print(sFT)
-    return results
-
-
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='MRR evaluation script')
