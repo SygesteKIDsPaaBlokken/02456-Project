@@ -2,33 +2,43 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
-import os, datetime, argparse
+import os, datetime, argparse, math
+import scipy.stats as stats
 
 from utils.config import MODEL_NAME
 
+def get_CI(df:pd.DataFrame, topK=5, alpha = 0.05, metric='score'):
+    row = df[df['topK'] == topK].iloc[0]
+    n = row[f'max_{metric}']
+    relevant = row[metric]
+    p_hat = relevant/n
+    z_critical = stats.norm.ppf(1 - alpha / 2)
+    margin_of_error = z_critical * math.sqrt((p_hat * (1 - p_hat)) / n)
+    lower_bound = p_hat - margin_of_error
+    upper_bound = p_hat + margin_of_error
+    return p_hat*100, margin_of_error*100, lower_bound*100, upper_bound*100
 
-def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10):
+def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10, mode='a',verbose=False):
     '''
     Calculates MRR score for the given model and evaluation data using MRR@10 as default.
     '''
-    query_ids = np.unique(dfEval['query'])
-    results = []
+    query_ids = np.unique(dfEval.iloc[:,0])
 
     MRR = 0
     ranking = []
 
     for n, qid in enumerate(tqdm(query_ids)):
 
-        query = dfEval[dfEval['query'] == qid]
-        retrievals = dfModel[dfModel['query']==qid]
-        relevant_passages = query.loc[query['score'] > 0,'passage'].values
+        query = dfEval[dfEval.iloc[:,0] == qid]
+        retrievals = dfModel[dfModel['qid']==qid]
+        relevant_passages = query.loc[query.iloc[:, 3] > 0, [2]].values
 
-        if qid in np.unique(dfModel['query']):
+        if qid in np.unique(dfModel['qid']):
             for i in range(0,MaxMRRRank):
-                if retrievals['passage'].iloc[i] in relevant_passages:
+                if retrievals['pid'].iloc[i] in relevant_passages:
                     MRR += 1/(i+1)
                     ranking.append(i+1)
-                    print(f"Found first relevant retrieval at rank: {i+1} for test query #{n+1}")
+                    #print(f"Found first relevant retrieval at rank: {i+1} for test query #{n+1}")
                     break
 
     MRR /= len(query_ids)
@@ -38,12 +48,13 @@ def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10):
     print('='*30)
 
     path = 'data/MRR.csv'
-    if os.path.exists(path):
+
+    if mode == 'a' and os.path.exists(path):
         pd.DataFrame({'model':model_name,'MRR':MRR,'timestamp':datetime.datetime.now()}, index=[0]).to_csv(path, mode='a', header=False, index=False)
-    else:
+    elif mode == 'a' and not os.path.exists(path):
         print('Creating new file data/MRR.csv since it does not exist already')
         pd.DataFrame({'model':model_name,'MRR':MRR,'timestamp':datetime.datetime.now()}, index=[0]).to_csv(path, index=False)
-    return results
+    return MRR
 
 def evaluate_model(
         eval_ds: DataFrame,
@@ -125,6 +136,6 @@ if __name__ == '__main__':
 
     dfEval = pd.read_csv(args.eval_file, sep=' ')
     dfModel = pd.read_csv(args.model)
-
+    print(dfEval)
     print('Evaluation model:', args.model)
     MRRRank(dfEval, dfModel, args.name)
