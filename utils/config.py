@@ -26,7 +26,7 @@ RANKING_PATH = Path('data/rankings')
 EVALUATION_PATH = Path('data/evaluations')
 
 ## Models
-SBERT_MODELS_PATH = Path('/dtu/blackhole/1b/167931/SBERT_models')
+SBERT_MODELS_PATH = Path('trained_models') #Path('/dtu/blackhole/1b/167931/SBERT_models')
 
 ## Model settings
 MODEL_NAME = 'HP_SBERT'

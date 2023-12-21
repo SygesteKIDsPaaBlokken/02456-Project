@@ -35,7 +35,7 @@ def render_bar_chart(save_fig = False, topK=5, metric='score'):
 
     x = np.arange(len(files))
     plt.yticks(x, [model[0] for model in data_sorted]) 
-    plt.title(f'% of relevant passages for top {topK} retrievals')
+    #plt.title(f'% of relevant passages for top {topK} retrievals')
    
     if save_fig:
         plt.savefig(f'assets/accuracy_with_ci.png', transparent=True)

@@ -6,7 +6,7 @@ from tqdm import tqdm
 from numpy.linalg import norm
 import nltk
 from nltk.corpus import stopwords
-from utils.evaluation import ScoringEvaluation
+from utils.evaluation import evaluate_model
 
 
 def score(A, B):
@@ -87,7 +87,7 @@ if __name__ == '__main__':
             pd.DataFrame(ftCorpus).to_csv(f'data/ftCorpus.csv')
             print(f'Calculating all FT passage vectors took {time() - t:.3f} seconds')
         dfFT = rank(queries, queryIDs, ftCorpus, ft, name='ft', N=N)
-        ScoringEvaluation(dfEval, dfFT, topK, name='Fasttext')
+        evaluate_model(dfEval, dfFT, topK, model_name='Fasttext', save_path='data/rankings')
 
 
 

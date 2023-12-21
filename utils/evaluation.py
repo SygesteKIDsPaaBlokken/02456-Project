@@ -18,7 +18,7 @@ def get_CI(df:pd.DataFrame, topK=5, alpha = 0.05, metric='score'):
     upper_bound = p_hat + margin_of_error
     return p_hat*100, margin_of_error*100, lower_bound*100, upper_bound*100
 
-def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10, mode='a',verbose=False):
+def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10, mode='a',show_progress=False):
     '''
     Calculates MRR score for the given model and evaluation data using MRR@10 as default.
     '''
@@ -27,7 +27,7 @@ def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10, mode='a',verbose=False):
     MRR = 0
     ranking = []
 
-    for n, qid in enumerate(tqdm(query_ids)):
+    for n, qid in enumerate(tqdm(query_ids,disable=not show_progress)):
 
         query = dfEval[dfEval.iloc[:,0] == qid]
         retrievals = dfModel[dfModel['qid']==qid]
@@ -42,10 +42,11 @@ def MRRRank(dfEval, dfModel, model_name, MaxMRRRank=10, mode='a',verbose=False):
                     break
 
     MRR /= len(query_ids)
-    print('='*30)
-    print(f'MRR@{MaxMRRRank}: {MRR:.4f}')
-    print('Number of test queries: ', len(query_ids))
-    print('='*30)
+    if show_progress:
+        print('='*30)
+        print(f'MRR@{MaxMRRRank}: {MRR:.4f}')
+        print('Number of test queries: ', len(query_ids))
+        print('='*30)
 
     path = 'data/MRR.csv'
 
@@ -73,20 +74,20 @@ def evaluate_model(
     k_max_scores = [0 for _ in top_k]
     k_max_counts = [0 for _ in top_k]
 
-    query_ids = np.unique(eval_ds['query'])
+    query_ids = np.unique(eval_ds.iloc[:,0])
     for qid in tqdm(query_ids):
         
         # Find the relevant rows
-        query_eval_rows = eval_ds[eval_ds['query'] == qid]
+        query_eval_rows = eval_ds[eval_ds.iloc[:,0] == qid]
         for i, k in enumerate(top_k):
             # Take the top k scores in the evaluation data, to find the maximum possible score
-            query_true_best_scores = query_eval_rows.sort_values('score',ascending=False)[:k]['score']
+            query_true_best_scores = query_eval_rows.sort_values(query_eval_rows.columns[3],ascending=False)[:k].iloc[:,3]
             k_max_scores[i] += query_true_best_scores.sum()
             k_max_counts[i] += (query_true_best_scores>0).sum()
 
             # Determine the top k summed score for the query
             top_k_passages = model_rankings[model_rankings['qid'] == qid][:k]['pid']
-            evaluation_scores = query_eval_rows.loc[query_eval_rows['passage'].isin(top_k_passages),'score']
+            evaluation_scores = query_eval_rows.loc[query_eval_rows.iloc[:, 2].isin(top_k_passages), query_eval_rows.columns[3]]
             
             k_scores[i] += evaluation_scores.sum()
             k_counts[i] += (evaluation_scores > 0).sum()

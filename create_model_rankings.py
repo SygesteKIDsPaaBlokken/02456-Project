@@ -27,13 +27,13 @@ topK:int = options.k
 if VERBOSE:
     data_loading_start = time()
     print("########### Loading data ###########")
-passages = pd.read_csv(MSMARCO_PATH.joinpath('collectionReduced.tsv'), sep='\t', header=None)
+passages = pd.read_csv('data/collectionReduced.tsv', sep='\t', header=None)
 passages.columns = ['pid','passage']
 if VERBOSE: 
     queries_loading_start = time()
     print(f"Passages loaded ({(queries_loading_start - data_loading_start)/60:.2f} min)")
 
-queries = pd.read_csv(MSMARCO_PATH.joinpath('msmarco-test2019-queries.tsv'), sep='\t', header=None)
+queries = pd.read_csv('data/msmarco-test2019-queries.tsv', sep='\t', header=None)
 queries.columns = ['qid','query']
 if VERBOSE: 
     print(f"Queries loaded ({(time() - queries_loading_start)/60:.2f} min)")
@@ -51,7 +51,7 @@ if 'SBERT' in model.value:
         model_path=get_SBERT_model_path(model),
         model_name=model.value
     )
-elif model == MODEL.FUZZY:
+elif model == MODEL.FUZZY_l1:
     rankings = rank_fuzzy(
         queries,
         passages,

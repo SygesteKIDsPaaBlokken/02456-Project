@@ -30,7 +30,7 @@ def rank_bm25(bm25, queries, queryIDs, N=1000, name='bm25'):
     t = time()
     out = pd.DataFrame(np.vstack((queryColumn, np.array(passageColumn), np.array(scoreColumn))).T,
                        columns=['query', 'passage', 'score'])
-    out.to_csv(f'data/{name}_RankingResults.csv', sep=',')
+    out.to_csv(f'data/rankings/{name}_top{N}.csv', sep=',')
     print(f'Saving {name} data took {time() - t:.3f} seconds')
     return out
 
@@ -51,4 +51,4 @@ if __name__ == '__main__':
     t = time()
     model = BM25Okapi(corpus_tokenized, k1=0.60, b=0.62)
     print(f'Loading corpus into BM25 took {t-time():.2f} seconds')
-    rank_bm25(model, queries, qids)
+    rank_bm25(model, queries, qids, N=100)
