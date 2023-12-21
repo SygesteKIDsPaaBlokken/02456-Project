@@ -7,6 +7,7 @@ transformers>=4.6.0
 scipy
 sentence-transformers
 optuna
+rank_bm25
 #fasttext
 fuzzysearch
 plotly
