@@ -183,6 +183,8 @@ data/collection.tsv
 
 trained_models
 
+MSMarco/
+
 out/*
 
 !data/evaluations/*
