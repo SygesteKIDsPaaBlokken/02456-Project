@@ -181,7 +181,7 @@ collectionReduced.tsv
 qidpidtriples.train.full.2.tsv
 data/collection.tsv
 
-trained_models
+trained_models/hyper_param
 
 MSMarco/
 
