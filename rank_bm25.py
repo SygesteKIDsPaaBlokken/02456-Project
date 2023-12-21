@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from time import time
-from bm25_repo.rank_bm25_master.rank_bm25 import BM25Okapi
+from rank_bm25 import BM25Okapi
 
 
 def rank_bm25(bm25, queries, queryIDs, N=1000, name='bm25'):
